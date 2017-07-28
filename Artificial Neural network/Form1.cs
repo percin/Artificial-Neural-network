@@ -10,10 +10,15 @@ using System.Windows.Forms;
 
 namespace Artificial_Neural_network
 {
-    public partial class form1 : Form
+    
+    public partial class Form1 : Form
     {
-        public form1()
+        int a=5;
+        public Form1()
         {
+            int b=a;
+            Form1.te
+            örnek örnek1 = new örnek();
             InitializeComponent();
         }
     }

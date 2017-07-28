@@ -14,9 +14,11 @@ namespace Artificial_Neural_network
         [STAThread]
         static void Main()
         {
+            örnek örnek1 = new örnek();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new form1());
+            Application.Run(new Form1());
+            
         }
     }
 }
