@@ -66,6 +66,9 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(541, 548);
             this.panel1.TabIndex = 1;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            this.panel1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseClick);
+            this.panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
             // 
             // panel2
             // 
@@ -81,6 +84,7 @@
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(196, 45);
             this.trackBar1.TabIndex = 3;
+            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // textBox1
             // 
@@ -206,7 +210,7 @@
             "22",
             "23",
             "24"});
-            this.comboBox1.Location = new System.Drawing.Point(103, 124);
+            this.comboBox1.Location = new System.Drawing.Point(116, 116);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 21);
             this.comboBox1.TabIndex = 13;
@@ -231,7 +235,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(9, 483);
+            this.button3.Location = new System.Drawing.Point(12, 484);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(106, 64);
             this.button3.TabIndex = 16;
@@ -240,7 +244,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(6, 582);
+            this.button4.Location = new System.Drawing.Point(12, 582);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(106, 65);
             this.button4.TabIndex = 17;
@@ -249,12 +253,13 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(12, 670);
+            this.button5.Location = new System.Drawing.Point(151, 489);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(103, 59);
+            this.button5.Size = new System.Drawing.Size(106, 158);
             this.button5.TabIndex = 18;
             this.button5.Text = "CLEAR";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // Form1
             // 
@@ -287,6 +292,7 @@
             this.Name = "Form1";
             this.Text = "Perceptron Simulation";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -296,24 +302,24 @@
         #endregion
 
         public System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.TrackBar trackBar1;
-        private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
+        public System.Windows.Forms.Panel panel1;
+        public System.Windows.Forms.Panel panel2;
+        public System.Windows.Forms.TrackBar trackBar1;
+        public System.Windows.Forms.TextBox textBox1;
+        public System.Windows.Forms.Label label1;
+        public System.Windows.Forms.Label label2;
+        public System.Windows.Forms.Label label3;
+        public System.Windows.Forms.Label label4;
+        public System.Windows.Forms.Button button2;
+        public System.Windows.Forms.ComboBox comboBox1;
+        public System.Windows.Forms.Label label7;
+        public System.Windows.Forms.Button button3;
+        public System.Windows.Forms.Button button4;
+        public System.Windows.Forms.Button button5;
     }
 }
 
