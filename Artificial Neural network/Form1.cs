@@ -14,12 +14,16 @@ namespace Artificial_Neural_network
     public partial class Form1 : Form
     {
         int a=5;
+        
+        
+
         public Form1()
         {
             int b=a;
-            Form1.te
+            
             örnek örnek1 = new örnek();
             InitializeComponent();
+            
         }
     }
 }
