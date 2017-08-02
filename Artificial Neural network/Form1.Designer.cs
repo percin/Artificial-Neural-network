@@ -59,6 +59,7 @@
             this.button1.TabIndex = 0;
             this.button1.Text = "Discrete Perceptron learning";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // panel1
             // 
@@ -181,39 +182,16 @@
             this.button2.TabIndex = 12;
             this.button2.Text = " Continuous Perceptron learning";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24"});
             this.comboBox1.Location = new System.Drawing.Point(116, 116);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 21);
             this.comboBox1.TabIndex = 13;
+            this.comboBox1.Text = "0";
             // 
             // label6
             // 
@@ -241,6 +219,7 @@
             this.button3.TabIndex = 16;
             this.button3.Text = "save point locations";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button4
             // 
@@ -250,6 +229,7 @@
             this.button4.TabIndex = 17;
             this.button4.Text = "restore last saved point locations";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button5
             // 
