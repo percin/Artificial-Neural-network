@@ -65,7 +65,7 @@
             // 
             this.panel1.Location = new System.Drawing.Point(302, 46);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(541, 548);
+            this.panel1.Size = new System.Drawing.Size(600, 600);
             this.panel1.TabIndex = 1;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             this.panel1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseClick);
@@ -73,9 +73,9 @@
             // 
             // panel2
             // 
-            this.panel2.Location = new System.Drawing.Point(901, 46);
+            this.panel2.Location = new System.Drawing.Point(974, 46);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(386, 387);
+            this.panel2.Size = new System.Drawing.Size(300, 300);
             this.panel2.TabIndex = 2;
             // 
             // trackBar1
@@ -85,6 +85,7 @@
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(196, 45);
             this.trackBar1.TabIndex = 3;
+            this.trackBar1.Value = 5;
             this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // textBox1
@@ -94,6 +95,7 @@
             this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 4;
             this.textBox1.Text = "300";
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // radioButton1
             // 

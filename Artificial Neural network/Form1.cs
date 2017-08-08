@@ -17,9 +17,10 @@ namespace Artificial_Neural_network
         // some variables 
         Graphics grafik;
         List<point> samples = new List<point>();
+        List<double> weights = new List<double>();
         classs[] pointcolornodearray;
-        int maximumloopnumber = 0;
-        double learningcoefficent = 0;
+        int maximumloopnumber = 200;
+        double learningcoefficent = 1;
 
 
         
@@ -37,7 +38,8 @@ namespace Artificial_Neural_network
 
         private void trackBar1_Scroll(object sender, EventArgs e) // learning coefficent
         {
-            label7.Text = " " + (double)trackBar1.Value / 1000;
+            learningcoefficent =(double)trackBar1.Value / 10;
+            label7.Text=" "+ learningcoefficent;
         } 
 
         private void panel1_Paint(object sender, PaintEventArgs e) //paint canvas in the start
@@ -51,8 +53,8 @@ namespace Artificial_Neural_network
         private void Form1_Load(object sender, EventArgs e)
         {
             grafik = panel1.CreateGraphics();
-            label7.Text = " " + (double)trackBar1.Value / 1000;
-            learningcoefficent= (double)trackBar1.Value / 1000;
+            label7.Text = " " + (double)trackBar1.Value / 10;
+            learningcoefficent= (double)trackBar1.Value / 10;
             maximumloopnumber= Int32.Parse(textBox1.Text);
            
                 
@@ -68,38 +70,45 @@ namespace Artificial_Neural_network
             }
         }
 
-        private void drawing() //  first drawing axis and call drawpoints function
+        private void drawing() //  first drawing axis,functions and call drawpoints function
         {
 
+            grafik.Clear(Color.White);
             //eksenler
             grafik.DrawLine(new Pen(Color.Black), new Point(0, panel1.Height / 2), new Point(panel1.Width, panel1.Height / 2));
             grafik.DrawLine(new Pen(Color.Black), new Point(panel1.Width / 2, 0), new Point(panel1.Width / 2, panel1.Height));
 
             Pen pen = new Pen(Color.DarkGreen);
-            double x1 = -10;
-            double w1 = 0;
-            double w2 = 0;
-            double w0 = 0;
-            double x0 = -1;
 
-            double y = -(x1 * w1 / w2) - ((x0 * w0) / w2);
-
-            double shift = panel1.Height / 2;
-
-
-            Point p1 = new Point(0, (int)(shift - y * 10));
-
-            x1 = 10;
-            double y2 = -(x1 * w1 / w2) + ((w0) / w2);
-
-            Point p2 = new Point(panel1.Width, (int)(shift - y2 * 10));
-
-            //drawing dicsriminating function
-            if (w2 != 0)
+            for (int i=0;i<weights.Count;i+=3)
             {
+                // w0*x +w1*y -w2=0 is our basic discriminant function.  in our   basic artificial neuran version there is 3 input.
+                // x0 =x , x1=y,  x2=-1
+                // w0*x0 +w1*x1 -1*w2=0 
+                // x0 means x coordinate and x1 means y coordinate. And x2 is just constant -1 for Enhanced input
+                // in this drawing function ı just found two point p1 and p2. than ı draw line p1 to p2.
+                // this p points belongs to borderline of canvas. So The x coordinate of p1 equals the zero. 
+                // and The x coordinate of p2 equals the edge of the canvas.
+                
+                if (weights[1+i] == 0)
+                    weights[1+i]+=0.01;
+
+                double y = (weights[2 + i] - weights[0 + i] * -(panel1.Width) / 2) / weights[1 + i];
+                PointF p1 = new PointF(0, (float) (panel1.Height/2-y));
+                
+                double y2 = (weights[2+i]- weights[0+i]*panel1.Width/2)/ weights[1+i];
+                PointF p2 = new PointF(panel1.Width, (float)(panel1.Height / 2 - y2));
+                //drawing dicsriminating function
+
+                //MessageBox.Show(" y:" +y+"   y2:"+y2 );
                 grafik.DrawLine(pen, p1, p2);
-                drawpoints();
+                    
+                
+                
             }
+            drawpoints();
+
+
         }
 
         private void panel1_MouseClick(object sender, MouseEventArgs e)
@@ -135,16 +144,16 @@ namespace Artificial_Neural_network
         private void button3_Click(object sender, EventArgs e) // save point location button
         {
             string dosya = "save.txt";
-            FileStream fs = new FileStream(dosya, FileMode.Append, FileAccess.Write);
+            FileStream fs = new FileStream(dosya, FileMode.Create, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
             
             foreach (point sample in samples)
             {
                 
-                string word = sample.X1.ToString("0.000000");
+                string word = sample.X0.ToString("0.000000");
                 sw.WriteLine(word);
                 
-                word = sample.X2.ToString("0.000000");
+                word = sample.X1.ToString("0.000000");
                 sw.WriteLine(word);
                 word = sample.sınıf.ToString("0.000000");
                 sw.WriteLine(word);
@@ -197,6 +206,7 @@ namespace Artificial_Neural_network
             bool error = true;
             double MinimumSquarederror = 0;
             int numberOfclass = 0;
+
             List<int> uniqueValues = new List<int>();
             for (int i = 0; i < samples.Count; ++i)
             {
@@ -215,10 +225,13 @@ namespace Artificial_Neural_network
 
             if (numberOfclass == 2)
             {
+
                 Random rast = new Random();
-                double w0 = rast.NextDouble();
-                double w1 = rast.NextDouble();
-                double w2 = rast.NextDouble();
+                weights.Add( rast.NextDouble());
+                weights.Add( rast.NextDouble());
+                weights.Add( rast.NextDouble());
+                drawing();
+                MessageBox.Show("w0="+weights[0]+"  w1="+weights[1]+"   w2="+weights[2]);
                 int o = 0;
                 int y = 0;
 
@@ -229,7 +242,7 @@ namespace Artificial_Neural_network
                     MinimumSquarederror = 0;
                     foreach (point im in samples)
                     {
-                        double net = w0 * im.X1 + w1 * im.X2 - w2;
+                        double net = weights[0] * im.X0 + weights[1] * im.X1 - weights[2];
                         if (net > 0)
                         {
                             o = 1;
@@ -240,27 +253,29 @@ namespace Artificial_Neural_network
                             o = -1;
                             y = uniqueValues[1];
                         }
-                        
+
                         if (y != im.sınıf)// check the error
                         {
                             error = true;
                             MinimumSquarederror += (im.sınıf - y) * (im.sınıf - y) / 2; // E=1/2 *(d-o)*(d-o)
-                            w0 = w0 + learningcoefficent * (im.sınıf - y) * im.X1 / 2; //updating weights w=w+1/2*c*(d-o)y
-                            w1 = w1 + learningcoefficent * (im.sınıf - y) * im.X2 / 2; //updating weights
-                            w2 = w2 + learningcoefficent * (im.sınıf - y) * -1 / 2; //updating weights
+                            weights[0] = weights[0] + learningcoefficent * (2) * im.X0 / 2; //updating weights w=w+1/2*c*(d-o)y
+                            weights[1] = weights[1] + learningcoefficent * (2) * im.X1 / 2; //updating weights
+                            weights[2] = weights[2] + learningcoefficent * (2) * -1 / 2; //updating weights
                         }
 
-                        grafik.Clear(Color.White);
-                        drawing();  // draw function on every update of weights
-                        
+
+                        drawing();
 
                     }
+                    
+                    // draw function on every update of weights
                     counter++;
                     if (counter > maximumloopnumber)
                     {
                         MessageBox.Show(@"Unfortunately the total number of educational cycles exceeded the maximum.
 And the training failed.
-You can try again by increasing the maximum number of cycles or by slightly changing the sample set.", "Big failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+You can try again by increasing the maximum number of cycles or by slightly changing the sample set. \n Total cycle number= " + counter, "Big failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        drawing();
                         return;
                     }
                 } // learning
@@ -301,25 +316,21 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             foreach (point sample in samples)
             {
 
-                double posX = (panel1.Width / 2) + sample.X1 * 10;
-                double posY = (panel1.Height / 2) - sample.X2 * 10;
+                double posX = (panel1.Width / 2) + sample.X0 * 10;
+                double posY = (panel1.Height / 2) - sample.X1 * 10;
 
                 Pen pen;
                
                     pen = new Pen(Color.FromArgb(pointcolornodearray[(int)sample.sınıf].r, pointcolornodearray[(int)sample.sınıf].g, pointcolornodearray[(int)sample.sınıf].b));
                 
-
-
-
-
-
+                
                 //drawing points
                 grafik.DrawLine(pen, new Point((int)posX - 3, (int)posY), new Point((int)posX + 3, (int)posY));
                 grafik.DrawLine(pen, new Point((int)posX, (int)posY - 3), new Point((int)posX, (int)posY + 3));
             }
         }
 
-        private void button5_Click(object sender, EventArgs e) // clear button which clear
+        public void button5_Click(object sender, EventArgs e) // clear button which clear
         {
             samples.Clear(); // örnekleri siliyor           
             grafik.Clear(Color.White); // ekranı boyuyor
@@ -330,32 +341,37 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             grafik.DrawLine(new Pen(Color.Gainsboro), new Point(panel1.Width / 2, 0), new Point(panel1.Width / 2, panel1.Height));
 
         }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            maximumloopnumber = Int32.Parse(textBox1.Text);
+        }
     }
 
     public class point
     {
+        double x0;
         double x1;
-        double x2;
         int snf;
 
-        public point(double x1, double x2, int snf)
+        public point(double x0, double x1, int snf)
         {
+            this.x0 = x0;
             this.x1 = x1;
-            this.x2 = x2;
             this.snf = snf;
         }
+
+        public double X0
+        {
+            get { return x0; }
+            set { this.x0 = value; }
+        }
+
 
         public double X1
         {
             get { return x1; }
             set { this.x1 = value; }
-        }
-
-
-        public double X2
-        {
-            get { return x2; }
-            set { this.x2 = value; }
         }
 
         public int sınıf
