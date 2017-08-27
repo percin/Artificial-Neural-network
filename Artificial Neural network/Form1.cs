@@ -18,7 +18,7 @@ namespace Artificial_Neural_network
         Graphics grafik;
         List<point> samples = new List<point>();
         List<double> weights = new List<double>();
-        classs[] pointcolornodearray;
+        classs[] ccolor;
         int maximumloopnumber = 200;
         double learningcoefficent = 1;
 
@@ -62,12 +62,23 @@ namespace Artificial_Neural_network
             string dosya = "save.txt";
             FileStream fs = new FileStream(dosya, FileMode.Append, FileAccess.Write);
             fs.Close();
-            pointcolornodearray = new classs[50];
-            for (int i = 0; i < 50; i++)
+            Random randa = new Random();
+            //
+            ccolor = new classs[2];
+            for (int i = 0; i < 2; i++)
             {
-                pointcolornodearray[i] = new classs(i);
+                ccolor[i] = new classs(i);
+                ccolor[i].numara = i;
+                ccolor[i].r = randa.Next(256);
+                ccolor[i].g = randa.Next(256);
+                ccolor[i].b = randa.Next(256);
+
                 comboBox1.Items.Add(i + "");
             }
+
+
+
+            
         }
 
         private void drawing() //  first drawing axis,functions and call drawpoints function
@@ -128,8 +139,8 @@ namespace Artificial_Neural_network
 
           
 
-                pen = new Pen(Color.FromArgb(pointcolornodearray[int.Parse(comboBox1.Text)].r, pointcolornodearray[int.Parse(comboBox1.Text)].g, pointcolornodearray[int.Parse(comboBox1.Text)].b),2);
-                sample = new point(posX, posY, Int32.Parse(comboBox1.Text));
+            pen = new Pen(Color.FromArgb(ccolor[int.Parse(comboBox1.Text)].r, ccolor[int.Parse(comboBox1.Text)].g, ccolor[int.Parse(comboBox1.Text)].b),2);
+            sample = new point(posX, posY, Int32.Parse(comboBox1.Text));
 
             
 
@@ -205,35 +216,24 @@ namespace Artificial_Neural_network
             int counter = 0;
             bool error = true;
             double MinimumSquarederror = 0;
-            int numberOfclass = 0;
+            int numberOfcategory = 0;
 
-            List<int> uniqueValues = new List<int>();
-            for (int i = 0; i < samples.Count; ++i)
-            {
-                    if (!uniqueValues.Contains(samples[i].sınıf))
-                        uniqueValues.Add(samples[i].sınıf);
-             }
-            numberOfclass = uniqueValues.Count; //just look for which and how many point class used
 
-            if (numberOfclass<2)
-            {
-                MessageBox.Show(@"Unfortunately the total number of  class of points fewer than 2.
-                And the training failed.
-                You can try again by increasing the total number of  sample set.", "Big failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
 
-            if (numberOfclass == 2)
+
+
+            // single layer and two category
+            if (radioButton1.Checked && radioButton3.Checked)
             {
 
                 Random rast = new Random();
-                weights.Add( rast.NextDouble());
-                weights.Add( rast.NextDouble());
-                weights.Add( rast.NextDouble());
-                drawing();
-                MessageBox.Show("w0="+weights[0]+"  w1="+weights[1]+"   w2="+weights[2]);
+                weights.Add(rast.NextDouble());
+                weights.Add(rast.NextDouble());
+                weights.Add(rast.NextDouble());
+                
+                MessageBox.Show("w0=" + weights[0] + "  w1=" + weights[1] + "   w2=" + weights[2]);
                 int o = 0;
-                int y = 0;
+                
 
 
                 while (error)
@@ -246,18 +246,18 @@ namespace Artificial_Neural_network
                         if (net > 0)
                         {
                             o = 1;
-                            y = uniqueValues[0];
+                            
                         }
                         else
                         {
                             o = -1;
-                            y = uniqueValues[1];
+                            
                         }
 
-                        if (y != im.sınıf)// check the error
+                        if (o != im.sınıf)// check the error
                         {
                             error = true;
-                            MinimumSquarederror += (im.sınıf - y) * (im.sınıf - y) / 2; // E=1/2 *(d-o)*(d-o)
+                            MinimumSquarederror += (im.sınıf - o) * (im.sınıf - o) / 2; // E=1/2 *(d-o)*(d-o)
                             weights[0] = weights[0] + learningcoefficent * (2) * im.X0 / 2; //updating weights w=w+1/2*c*(d-o)y
                             weights[1] = weights[1] + learningcoefficent * (2) * im.X1 / 2; //updating weights
                             weights[2] = weights[2] + learningcoefficent * (2) * -1 / 2; //updating weights
@@ -267,21 +267,24 @@ namespace Artificial_Neural_network
                         drawing();
 
                     }
-                    
+
                     // draw function on every update of weights
                     counter++;
                     if (counter > maximumloopnumber)
                     {
                         MessageBox.Show(@"Unfortunately the total number of educational cycles exceeded the maximum.
 And the training failed.
-You can try again by increasing the maximum number of cycles or by slightly changing the sample set. \n Total cycle number= " + counter, "Big failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        drawing();
+You can try again by increasing the maximum number of cycles or by slightly changing the sample set. \n Total cycle number= " + counter, "Big failure with over try", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        
                         return;
                     }
                 } // learning
+                MessageBox.Show(" operation is succesfull");
             }
 
-            else
+
+            // single layer and multi category
+            else if (radioButton1.Checked && radioButton4.Checked)
             {
                 while (error)
                 {
@@ -302,8 +305,11 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
             }
 
-            
-            
+
+            // multi layer and two category
+            else;
+
+
         }
 
         private void button2_Click(object sender, EventArgs e) // continous perceptron leaning
@@ -321,7 +327,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
                 Pen pen;
                
-                    pen = new Pen(Color.FromArgb(pointcolornodearray[(int)sample.sınıf].r, pointcolornodearray[(int)sample.sınıf].g, pointcolornodearray[(int)sample.sınıf].b));
+                pen = new Pen(Color.FromArgb(ccolor[(int)sample.sınıf].r, ccolor[(int)sample.sınıf].g, ccolor[(int)sample.sınıf].b),2);
                 
                 
                 //drawing points
@@ -345,6 +351,61 @@ You can try again by increasing the maximum number of cycles or by slightly chan
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             maximumloopnumber = Int32.Parse(textBox1.Text);
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            comboBox1.Items.Clear();
+            Random randa = new Random();
+            ccolor = new classs[Int32.Parse(textBox2.Text)];
+            for (int i = 0; i < Int32.Parse(textBox2.Text); i++)
+            {
+                ccolor[i] = new classs(i);
+                comboBox1.Items.Add(i + "");
+                ccolor[i].numara = i;
+                ccolor[i].r = randa.Next(256);
+                ccolor[i].g = randa.Next(256);
+                ccolor[i].b = randa.Next(256);
+            }
+            button5_Click( sender,  e);
+        }
+
+        private void radioButton4_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton4.Checked)
+            {
+                label8.Visible = true;
+                textBox2.Visible = true;
+                Random randa = new Random();
+                ccolor = new classs[Int32.Parse(textBox2.Text)];
+                for (int i = 0; i < Int32.Parse(textBox2.Text); i++)
+                {
+                    ccolor[i] = new classs(i);
+                    comboBox1.Items.Add(i + "");
+                    ccolor[i].numara = i;
+                    ccolor[i].r = randa.Next(256);
+                    ccolor[i].g = randa.Next(256);
+                    ccolor[i].b = randa.Next(256);
+                }
+
+
+            }
+            else
+            {
+                label8.Visible = false;
+                
+                textBox2.Visible = false;
+            }
+        }
+
+        private void radioButton3_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 
