@@ -14,7 +14,7 @@ namespace Artificial_Neural_network
         [STAThread]
         static void Main()
         {
-            örnek örnek1 = new örnek();
+            
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Form1 a = new Form1();

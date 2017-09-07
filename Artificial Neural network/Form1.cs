@@ -21,6 +21,7 @@ namespace Artificial_Neural_network
         classs[] ccolor;
         int maximumloopnumber = 200;
         double learningcoefficent = 1;
+        
 
 
         
@@ -53,12 +54,22 @@ namespace Artificial_Neural_network
         private void Form1_Load(object sender, EventArgs e)
         {
             grafik = panel1.CreateGraphics();
+            grafik.SmoothingMode= System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             label7.Text = " " + (double)trackBar1.Value / 10;
             learningcoefficent= (double)trackBar1.Value / 10;
             maximumloopnumber= Int32.Parse(textBox1.Text);
-           
-                
-            
+
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = 100;
+
+            Random rast = new Random();
+            weights.Add(rast.NextDouble());
+            weights.Add(rast.NextDouble());
+            weights.Add(rast.NextDouble());
+
+
+
+
             string dosya = "save.txt";
             FileStream fs = new FileStream(dosya, FileMode.Append, FileAccess.Write);
             fs.Close();
@@ -213,6 +224,8 @@ namespace Artificial_Neural_network
 
         private void button1_Click(object sender, EventArgs e) // dicscrete perceptron learning
         {
+           
+            Weighttable(sender,e);
             int counter = 0;
             bool error = true;
             double MinimumSquarederror = 0;
@@ -225,14 +238,10 @@ namespace Artificial_Neural_network
             // single layer and two category
             if (radioButton1.Checked && radioButton3.Checked)
             {
-
-                Random rast = new Random();
-                weights.Add(rast.NextDouble());
-                weights.Add(rast.NextDouble());
-                weights.Add(rast.NextDouble());
                 
-                MessageBox.Show("w0=" + weights[0] + "  w1=" + weights[1] + "   w2=" + weights[2]);
+                MessageBox.Show(" weights for start : w0=" + weights[0] + "  w1=" + weights[1] + "   w2=" + weights[2]);
                 int o = 0;
+                double y = 0;
                 
 
 
@@ -242,22 +251,25 @@ namespace Artificial_Neural_network
                     MinimumSquarederror = 0;
                     foreach (point im in samples)
                     {
+                        im.error = false;
                         double net = weights[0] * im.X0 + weights[1] * im.X1 - weights[2];
                         if (net > 0)
                         {
                             o = 1;
-                            
+                            y = 1;
                         }
                         else
                         {
                             o = -1;
+                            y = 0;
                             
                         }
 
-                        if (o != im.sınıf)// check the error
+                        if (y != im.sınıf)// check the error
                         {
+                            im.error = true;
                             error = true;
-                            MinimumSquarederror += (im.sınıf - o) * (im.sınıf - o) / 2; // E=1/2 *(d-o)*(d-o)
+                            MinimumSquarederror += ((im.sınıf - y) * (im.sınıf - y)) / 2; // E=1/2 *(d-o)*(d-o)
                             weights[0] = weights[0] + learningcoefficent * (2) * im.X0 / 2; //updating weights w=w+1/2*c*(d-o)y
                             weights[1] = weights[1] + learningcoefficent * (2) * im.X1 / 2; //updating weights
                             weights[2] = weights[2] + learningcoefficent * (2) * -1 / 2; //updating weights
@@ -275,9 +287,10 @@ namespace Artificial_Neural_network
                         MessageBox.Show(@"Unfortunately the total number of educational cycles exceeded the maximum.
 And the training failed.
 You can try again by increasing the maximum number of cycles or by slightly changing the sample set. \n Total cycle number= " + counter, "Big failure with over try", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        
+                        MessageBox.Show("" + MinimumSquarederror + "" + error + "" + learningcoefficent);
                         return;
                     }
+                    else progressBar1.Value =(int) ((((double) counter) / ((double)maximumloopnumber))*100);
                 } // learning
                 MessageBox.Show(" operation is succesfull");
             }
@@ -294,13 +307,13 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
 
                     }
-                    if (counter > maximumloopnumber)
-                    {
-                        MessageBox.Show(@"Unfortunately the total number of educational cycles exceeded the maximum.
-And the training failed.
-You can try again by increasing the maximum number of cycles or by slightly changing the sample set.", "Big failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
+//                    if (counter > maximumloopnumber)
+//                    {
+//                        MessageBox.Show(@"Unfortunately the total number of educational cycles exceeded the maximum.
+//And the training failed.
+//You can try again by increasing the maximum number of cycles or by slightly changing the sample set.", "Big failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+//                        return;
+//                    }
                 } // learning
 
             }
@@ -333,6 +346,13 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                 //drawing points
                 grafik.DrawLine(pen, new Point((int)posX - 3, (int)posY), new Point((int)posX + 3, (int)posY));
                 grafik.DrawLine(pen, new Point((int)posX, (int)posY - 3), new Point((int)posX, (int)posY + 3));
+
+                pen = new Pen(Color.Red);
+                if(sample.error==true)
+                {
+                    Rectangle r1=new Rectangle((int)posX-5, (int)posY-5 , 10 , 10 );
+                    grafik.DrawEllipse(pen,r1);
+                }
             }
         }
 
@@ -370,10 +390,12 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             button5_Click( sender,  e);
         }
 
-        private void radioButton4_CheckedChanged(object sender, EventArgs e)
+        private void radioButton4_CheckedChanged(object sender, EventArgs e) //multicategory checked ?
         {
             if (radioButton4.Checked)
             {
+                weights.Clear();
+                Random rast = new Random();
                 label8.Visible = true;
                 textBox2.Visible = true;
                 Random randa = new Random();
@@ -386,15 +408,39 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                     ccolor[i].r = randa.Next(256);
                     ccolor[i].g = randa.Next(256);
                     ccolor[i].b = randa.Next(256);
+                    
+                    weights.Add(rast.NextDouble());
+                    weights.Add(rast.NextDouble());
+                    weights.Add(rast.NextDouble());
+
                 }
+
 
 
             }
             else
             {
+                weights.Clear();
+                Random rast = new Random();
+                weights.Add(rast.NextDouble());
+                weights.Add(rast.NextDouble());
+                weights.Add(rast.NextDouble());
+
+                ccolor = new classs[2];
+                for (int i = 0; i < 2; i++)
+                {
+                    ccolor[i] = new classs(i);
+                    ccolor[i].numara = i;
+                    ccolor[i].r = rast.Next(256);
+                    ccolor[i].g = rast.Next(256);
+                    ccolor[i].b = rast.Next(256);
+
+                    comboBox1.Items.Add(i + "");
+                }
+
                 label8.Visible = false;
-                
                 textBox2.Visible = false;
+                
             }
         }
 
@@ -407,19 +453,131 @@ You can try again by increasing the maximum number of cycles or by slightly chan
         {
 
         }
+        private void TabloEkle(int nRow, int nCol, int wCell)
+        {
+            // Tabloyu metinsel olarak çizmek için SringBuilder nesnesi
+            StringBuilder tableRtf = new StringBuilder();
+
+            // Tablo oluşturma formatının başlangıcı          
+            tableRtf.Append(@"{\rtf1 ");
+
+            // Döngünün dönüş sayısı satır sayısını belirleyecek
+            for (int i = 0; i < nRow; i++)
+            {
+                // satır oluştur
+                tableRtf.Append(@"\trowd");
+
+                for (int y = 1; y <= nCol; y++)
+                {
+                    // cell komutu ile yeni hücre oluşturalım
+                    tableRtf.Append(@"\cellx" + y * wCell);
+                    
+
+                }
+
+                // satır sonu
+                tableRtf.Append(@"\intbl \cell \row");
+            }
+
+            // Tablo çizimini kapatalım
+            tableRtf.Append(@"\pard");
+            tableRtf.Append(@"}");
+
+            // Son olarak hazırladığımız tablo çizimini RichTextbox'a atalım
+            this.richTextBox1.Rtf = tableRtf.ToString();
+        }
+        private static String InsertTableInRichTextBox(DataTable dtbl, int width)
+        {
+            //Since too much string appending go for string builder
+            StringBuilder sringTableRtf = new StringBuilder();
+
+            //beginning of rich text format,dont customize this begining line
+            sringTableRtf.Append(@"{\rtf1 ");
+
+            //create 5 rows with 3 cells each
+            int cellWidth;
+
+            //Start the Row
+            sringTableRtf.Append(@"\trowd");
+
+            //Populate the Table header from DataTable column headings.
+            for (int j = 0; j <  dtbl.Columns.Count; j++)
+            {
+                //A cell with width 1000.
+                sringTableRtf.Append(@"\cellx" + ((j + 1) * width).ToString());
+
+                if (j == 0)
+                    sringTableRtf.Append(@"\intbl  " + dtbl.Columns[j].ColumnName);
+                else
+                    sringTableRtf.Append(@"\cell   " + dtbl.Columns[j].ColumnName);
+            }
+
+            //Add the table header row
+            sringTableRtf.Append(@"\intbl \cell \row");
+
+            //Loop to populate the table cell data from DataTable
+            for (int i = 0; i < dtbl.Rows.Count; i++)
+      {
+                //Start the Row
+                sringTableRtf.Append(@"\trowd");
+
+                for (int j = 0; j < dtbl.Columns.Count; j++)
+          {
+                    cellWidth = (j + 1) * width;
+
+                    //A cell with width 1000.
+                    sringTableRtf.Append(@"\cellx" + cellWidth.ToString());
+
+                    if (j == 0)
+                        sringTableRtf.Append(@"\intbl  " + dtbl.Rows[i][j].ToString());
+                    else
+                        sringTableRtf.Append(@"\cell   " + dtbl.Rows[i][j].ToString());
+                }
+
+                //Insert data row
+                sringTableRtf.Append(@"\intbl \cell \row");
+            }
+
+            sringTableRtf.Append(@"\pard");
+            sringTableRtf.Append(@"}");
+
+            //convert the string builder to string
+            return sringTableRtf.ToString();
+        }
+        private void Weighttable(object sender, EventArgs e)
+        {
+            //Create a DataTable with four columns.
+            DataTable dtbl = new DataTable();
+            dtbl.Columns.Add("ID", typeof(int));
+            dtbl.Columns.Add("Name", typeof(string));
+            dtbl.Columns.Add("City", typeof(string));
+            dtbl.Columns.Add("Country", typeof(string));
+
+            //Here we add five DataRows.
+            dtbl.Rows.Add(1, "Ram", "Bangalore", "India");
+            dtbl.Rows.Add(2, "Manoj", "Mumbai", "India");
+            dtbl.Rows.Add(3, "Peter", "Chennai", "India");
+            dtbl.Rows.Add(4, "Eric", "Delhi", "India");
+
+            //Insert Table in RichTextBox Control by setting .Rtf as the string returned.
+            //Set the RichTextBox width to fit the table completely,
+            this.richTextBox1.Rtf = InsertTableInRichTextBox(dtbl, 2000);
+        }
     }
 
     public class point
     {
         double x0;
         double x1;
-        int snf;
+        double snf;
+        public bool error;
 
-        public point(double x0, double x1, int snf)
+        public point(double x0, double x1, double snf)
         {
             this.x0 = x0;
             this.x1 = x1;
             this.snf = snf;
+            this.error = false;
         }
 
         public double X0
@@ -435,17 +593,18 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             set { this.x1 = value; }
         }
 
-        public int sınıf
+        public double sınıf
         {
             get { return snf; }
             set { this.snf = value; }
         }
+        
     } // ornek
 
     public class classs
     {
         public int r, g, b;
-        public int numara;
+        public double numara;
 
         public classs(int i)
         {

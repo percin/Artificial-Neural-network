@@ -54,6 +54,10 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.label10 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -71,7 +75,7 @@
             // 
             // panel1
             // 
-            this.panel1.Location = new System.Drawing.Point(302, 46);
+            this.panel1.Location = new System.Drawing.Point(263, 2);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(600, 600);
             this.panel1.TabIndex = 1;
@@ -81,9 +85,9 @@
             // 
             // panel2
             // 
-            this.panel2.Location = new System.Drawing.Point(974, 46);
+            this.panel2.Location = new System.Drawing.Point(1082, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(300, 300);
+            this.panel2.Size = new System.Drawing.Size(230, 240);
             this.panel2.TabIndex = 2;
             // 
             // trackBar1
@@ -279,7 +283,7 @@
             this.panel4.Controls.Add(this.label1);
             this.panel4.Location = new System.Drawing.Point(6, 12);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(280, 100);
+            this.panel4.Size = new System.Drawing.Size(251, 100);
             this.panel4.TabIndex = 22;
             // 
             // label6
@@ -325,6 +329,44 @@
             this.label8.Text = "Total category number:";
             this.label8.Visible = false;
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.BackColor = System.Drawing.Color.Transparent;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            this.label9.Location = new System.Drawing.Point(870, 12);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(54, 13);
+            this.label9.TabIndex = 25;
+            this.label9.Text = "weights:";
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(869, 43);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(198, 199);
+            this.richTextBox1.TabIndex = 26;
+            this.richTextBox1.Text = "";
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(90, 281);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(141, 23);
+            this.progressBar1.TabIndex = 27;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.BackColor = System.Drawing.Color.Transparent;
+            this.label10.Location = new System.Drawing.Point(6, 281);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(78, 13);
+            this.label10.TabIndex = 28;
+            this.label10.Text = "learning status:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -332,7 +374,11 @@
             this.BackColor = System.Drawing.SystemColors.Window;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(1313, 741);
+            this.ClientSize = new System.Drawing.Size(1313, 733);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.panel4);
@@ -394,6 +440,10 @@
         public System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        public System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label label10;
     }
 }
 
