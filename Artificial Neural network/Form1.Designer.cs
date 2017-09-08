@@ -160,6 +160,7 @@
             this.label2.Size = new System.Drawing.Size(234, 14);
             this.label2.TabIndex = 8;
             this.label2.Text = "multi layer learning (only for exor problem ):";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label3
             // 
@@ -366,6 +367,7 @@
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(141, 23);
             this.progressBar1.TabIndex = 27;
+            this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
             // 
             // label10
             // 

@@ -22,15 +22,9 @@ namespace Artificial_Neural_network
         
 
 
-        
-        
-
-
-
+     
         public Form1()
         {
-            
-         
             InitializeComponent();
             
         }
@@ -45,7 +39,7 @@ namespace Artificial_Neural_network
         {
             grafik.DrawLine(new Pen(Color.Black), new Point(0, panel1.Height / 2), new Point(panel1.Width, panel1.Height / 2));
             
-            grafik.DrawLine(new Pen(Color.Pink), new Point(panel1.Width / 2, 0), new Point(panel1.Width / 2, panel1.Height));
+            grafik.DrawLine(new Pen(Color.Pink,2), new Point(panel1.Width / 2, 0), new Point(panel1.Width / 2, panel1.Height));
 
         }
 
@@ -65,6 +59,8 @@ namespace Artificial_Neural_network
             weights.Add(rast.NextDouble());
             weights.Add(rast.NextDouble());
             weights.Add(rast.NextDouble());
+
+            Weighttable(sender,e);
 
 
 
@@ -144,7 +140,7 @@ namespace Artificial_Neural_network
                 PointF p1 = new PointF((float)(lipstick[0]+w), (float)(-lipstick[1]  + h));
                 PointF p2 = new PointF((float)(lipstick[2]  +w), (float)(-lipstick[3]  + h));
 
-                MessageBox.Show("p1 x:"+p1.X+"p1 y:"+p1.Y+"p2 x:"+p2.X+"p2 y:"+p2.Y);
+                //MessageBox.Show("p1 x:"+p1.X+"p1 y:"+p1.Y+"p2 x:"+p2.X+"p2 y:"+p2.Y);
                 grafik.DrawLine(pen, p1, p2);
 
                 lipstick.Clear();
@@ -257,9 +253,7 @@ namespace Artificial_Neural_network
             if (radioButton1.Checked && radioButton3.Checked)
             {
                 
-                MessageBox.Show(" weights for start : w0=" + weights[0] + "  w1=" + weights[1] + "   w2=" + weights[2]);
                 int o = 0;
-                double y = 0;
                 int k = 0;
                 
 
@@ -293,10 +287,10 @@ namespace Artificial_Neural_network
                         {   
                             im.error = true;
                             error = true;
-                            MinimumSquarederror += ((k - 0) * (k - 0)) / 2; // E=1/2 *(d-o)*(d-o)
-                            weights[0] = weights[0] + learningcoefficent * (k-0)* im.X0 / 2; //updating weights w=w+1/2*c*(d-o)y
-                            weights[1] = weights[1] + learningcoefficent * (k - 0) * im.X1 / 2; //updating weights
-                            weights[2] = weights[2] + learningcoefficent * (k - 0) * -1 / 2; //updating weights
+                            MinimumSquarederror += ((k - o) * (k - o)) / 2; // E=1/2 *(d-o)*(d-o)
+                            weights[0] = weights[0] + learningcoefficent * (k - o)* im.X0 / 2; //updating weights w=w+1/2*c*(d-o)y
+                            weights[1] = weights[1] + learningcoefficent * (k - o) * im.X1 / 2; //updating weights
+                            weights[2] = weights[2] + learningcoefficent * (k - o) * -1 / 2; //updating weights
                         }
     
                     }
@@ -322,22 +316,74 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             // single layer and multi category
             else if (radioButton1.Checked && radioButton4.Checked)
             {
-                while (error)
+                
+                int oo = 0;
+                int k = 0;
+
+
+
+                while (error) //keep learning until there is no more error
                 {
                     error = false;
-                    foreach (point im in samples)
-                    {
+                    MinimumSquarederror = 0;
 
+                    foreach (point im in samples) //control every point
+                    {
+                        im.error = false;
+                        for (int i=0;i<ccolor.Length ;i++) // control with every category
+                        {
+                            double net = weights[0+i*3] * im.X0 + weights[1 + i * 3] * im.X1 - weights[2 + i * 3];
+                            if (net > 0)
+                            {
+                                oo = 1;
+                            }
+                            else
+                            {
+                                oo = -1;
+                            }
+
+
+                            if (im.sınıf == i)
+                                k = 1;
+                            else
+                                k = -1;
+
+
+
+                            if (oo != k)// check the error
+                            {
+                                im.error = true;
+                                error = true;
+                                MinimumSquarederror += ((k - oo) * (k - oo)) / 2; // E=1/2 *(d-o)*(d-o)
+                                weights[0 + i * 3] = weights[0 + i * 3] + learningcoefficent * (k - oo) * im.X0 / 2; //updating weights w=w+1/2*c*(d-o)y
+                                weights[1 + i * 3] = weights[1 + i * 3] + learningcoefficent * (k - oo) * im.X1 / 2; //updating weights
+                                weights[2 + i * 3] = weights[2 + i * 3] + learningcoefficent * (k - oo) * -1 / 2; //updating weights
+                            }
+
+                        }
+
+                        
+                        
 
                     }
-//                    if (counter > maximumloopnumber)
-//                    {
-//                        MessageBox.Show(@"Unfortunately the total number of educational cycles exceeded the maximum.
-//And the training failed.
-//You can try again by increasing the maximum number of cycles or by slightly changing the sample set.", "Big failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
-//                        return;
-//                    }
+
+                    // draw function on every update of weights
+                    counter++;
+                    drawing();
+                    Weighttable(sender, e);
+                    if (counter > maximumloopnumber)
+                    {
+                        MessageBox.Show(@"Unfortunately the total number of educational cycles exceeded the maximum.
+                        And the training failed.
+                        You can try again by increasing the maximum number of cycles or by slightly changing 
+                        the sample set. \n Total cycle number= " + counter, "Big failure with over try", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("" + MinimumSquarederror + "" + error + "" + learningcoefficent);
+                        return;
+                    }
+                    else progressBar1.Value = (int)((((double)counter) / ((double)maximumloopnumber)) * 100);
                 } // learning
+                MessageBox.Show(" operation is succesfull \nTotal learning cycle:" + counter + "\nTotal Error:" + MinimumSquarederror);
+
 
             }
 
@@ -351,7 +397,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
         private void button2_Click(object sender, EventArgs e) // continous perceptron leaning
         {
-
+            
         }
 
         private void drawpoints() // drawing points in list
@@ -359,8 +405,8 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             foreach (point sample in samples)
             {
 
-                double posX = (panel1.Width / 2) + sample.X0 * 10;
-                double posY = (panel1.Height / 2) - sample.X1 * 10;
+                double posX = (panel1.Width / 2) + sample.X0 ;
+                double posY = (panel1.Height / 2) - sample.X1 ;
 
                 Pen pen;
                
@@ -382,13 +428,13 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
         public void button5_Click(object sender, EventArgs e) // clear button which clear
         {
-            samples.Clear(); // örnekleri siliyor           
-            grafik.Clear(Color.White); // ekranı boyuyor
+            samples.Clear(); // erase points           
+            grafik.Clear(Color.White); // cleaning
 
 
-            // eksenleri çiziyor
-            grafik.DrawLine(new Pen(Color.Gainsboro), new Point(0, panel1.Height / 2), new Point(panel1.Width, panel1.Height / 2));
-            grafik.DrawLine(new Pen(Color.Gainsboro), new Point(panel1.Width / 2, 0), new Point(panel1.Width / 2, panel1.Height));
+            // drawing dimensions
+            grafik.DrawLine(new Pen(Color.Black), new Point(0, panel1.Height / 2), new Point(panel1.Width, panel1.Height / 2));
+            grafik.DrawLine(new Pen(Color.Pink,2), new Point(panel1.Width / 2, 0), new Point(panel1.Width / 2, panel1.Height));
 
         }
 
@@ -416,6 +462,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
         private void radioButton4_CheckedChanged(object sender, EventArgs e) //multicategory checked ?
         {
+            button5_Click(sender, e);
             comboBox1.Items.Clear();
             weights.Clear();
             Random rast = new Random();
@@ -440,7 +487,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                     weights.Add(rast.NextDouble());
 
                 }
-
+                Weighttable(sender, e);
 
 
             }
@@ -466,7 +513,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
                 label8.Visible = false;
                 textBox2.Visible = false;
-                
+                Weighttable(sender, e);
             }
         }
 
@@ -559,6 +606,8 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e) //radiobuton2 is multilayer buton
         {
+            button5_Click(sender, e); // clear button which clear
+
             comboBox1.Items.Clear();
             weights.Clear();
             Random rast = new Random();
@@ -653,6 +702,16 @@ You can try again by increasing the maximum number of cycles or by slightly chan
         {
             grafik2.DrawLine(new Pen(Color.Black), new Point(0, panel2.Height / 2), new Point(panel2.Width, panel2.Height / 2));
             grafik2.DrawLine(new Pen(Color.Pink), new Point(panel2.Width / 2, 0), new Point(panel2.Width / 2, panel2.Height));
+
+        }
+
+        private void progressBar1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
 
         }
     }
