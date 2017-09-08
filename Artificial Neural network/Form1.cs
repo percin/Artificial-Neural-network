@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.IO;
+using System.Text;
+using System.Windows.Forms;
 namespace Artificial_Neural_network
 {
-    
+
     public partial class Form1 : Form
     {
-
+        
         // some variables 
         Graphics grafik;
+        Graphics grafik2;
         List<point> samples = new List<point>();
         List<double> weights = new List<double>();
         classs[] ccolor;
@@ -46,7 +44,7 @@ namespace Artificial_Neural_network
         private void panel1_Paint(object sender, PaintEventArgs e) //paint canvas in the start
         {
             grafik.DrawLine(new Pen(Color.Black), new Point(0, panel1.Height / 2), new Point(panel1.Width, panel1.Height / 2));
-            //y ekseni
+            
             grafik.DrawLine(new Pen(Color.Pink), new Point(panel1.Width / 2, 0), new Point(panel1.Width / 2, panel1.Height));
 
         }
@@ -54,6 +52,7 @@ namespace Artificial_Neural_network
         private void Form1_Load(object sender, EventArgs e)
         {
             grafik = panel1.CreateGraphics();
+            grafik2 = panel2.CreateGraphics();
             grafik.SmoothingMode= System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             label7.Text = " " + (double)trackBar1.Value / 10;
             learningcoefficent= (double)trackBar1.Value / 10;
@@ -94,9 +93,9 @@ namespace Artificial_Neural_network
 
         private void drawing() //  first drawing axis,functions and call drawpoints function
         {
-
+            List<double> lipstick = new List<double>();
             grafik.Clear(Color.White);
-            //eksenler
+            //dimensions
             grafik.DrawLine(new Pen(Color.Black), new Point(0, panel1.Height / 2), new Point(panel1.Width, panel1.Height / 2));
             grafik.DrawLine(new Pen(Color.Black), new Point(panel1.Width / 2, 0), new Point(panel1.Width / 2, panel1.Height));
 
@@ -104,28 +103,51 @@ namespace Artificial_Neural_network
 
             for (int i=0;i<weights.Count;i+=3)
             {
-                // w0*x +w1*y -w2=0 is our basic discriminant function.  in our   basic artificial neuran version there is 3 input.
-                // x0 =x , x1=y,  x2=-1
-                // w0*x0 +w1*x1 -1*w2=0 
-                // x0 means x coordinate and x1 means y coordinate. And x2 is just constant -1 for Enhanced input
-                // in this drawing function ı just found two point p1 and p2. than ı draw line p1 to p2.
-                // this p points belongs to borderline of canvas. So The x coordinate of p1 equals the zero. 
-                // and The x coordinate of p2 equals the edge of the canvas.
-                
-                if (weights[1+i] == 0)
-                    weights[1+i]+=0.01;
 
-                double y = (weights[2 + i] - weights[0 + i] * -(panel1.Width) / 2) / weights[1 + i];
-                PointF p1 = new PointF(0, (float) (panel1.Height/2-y));
-                
-                double y2 = (weights[2+i]- weights[0+i]*panel1.Width/2)/ weights[1+i];
-                PointF p2 = new PointF(panel1.Width, (float)(panel1.Height / 2 - y2));
-                //drawing dicsriminating function
+                if (weights[1 + i] == 0)
+                    weights[1 + i] = 0.000001;
+                if (weights[ i] == 0)
+                    weights[ i] = 0.000001;
 
-                //MessageBox.Show(" y:" +y+"   y2:"+y2 );
+                double w = panel1.Width  / 2;
+                double h = panel1.Height / 2;
+
+                double a = (weights[2 + i] - weights[0 + i] * h) / weights[1 + i];
+                if (h >a&& -h <a)
+                {
+                    lipstick.Add(w);
+                    lipstick.Add(a);
+                }
+
+                a = (weights[2 + i] - weights[0 + i] * -h) / weights[1 + i];
+                if (h >a&& -h <a)
+                {
+                    lipstick.Add(-w);
+                    lipstick.Add(a);
+                }
+
+                a = (weights[2 + i] - weights[1 + i] * w) / weights[0 + i];
+                if (w >a&& -w <a)
+                {
+                    lipstick.Add(a);
+                    lipstick.Add(h);
+                }
+
+                a = (weights[2 + i] - weights[1 + i] * -w) / weights[0 + i];
+                if (w >a&& -w <a)
+                {
+                    lipstick.Add(a);
+                    lipstick.Add(-h);
+                }
+
+                
+                PointF p1 = new PointF((float)(lipstick[0]+w), (float)(-lipstick[1]  + h));
+                PointF p2 = new PointF((float)(lipstick[2]  +w), (float)(-lipstick[3]  + h));
+
+                MessageBox.Show("p1 x:"+p1.X+"p1 y:"+p1.Y+"p2 x:"+p2.X+"p2 y:"+p2.Y);
                 grafik.DrawLine(pen, p1, p2);
-                    
-                
+
+                lipstick.Clear();
                 
             }
             drawpoints();
@@ -145,8 +167,8 @@ namespace Artificial_Neural_network
 
 
 
-            double posX = (double)(e.X - panel1.Width / 2) / 10;
-            double posY = (double)(panel1.Height / 2 - e.Y) / 10;
+            double posX = (double)(e.X - panel1.Width / 2) ;
+            double posY = (double)(panel1.Height / 2 - e.Y) ;
 
           
 
@@ -225,15 +247,11 @@ namespace Artificial_Neural_network
         private void button1_Click(object sender, EventArgs e) // dicscrete perceptron learning
         {
            
-            Weighttable(sender,e);
+            
             int counter = 0;
             bool error = true;
             double MinimumSquarederror = 0;
-            int numberOfcategory = 0;
-
-
-
-
+            
 
             // single layer and two category
             if (radioButton1.Checked && radioButton3.Checked)
@@ -242,6 +260,7 @@ namespace Artificial_Neural_network
                 MessageBox.Show(" weights for start : w0=" + weights[0] + "  w1=" + weights[1] + "   w2=" + weights[2]);
                 int o = 0;
                 double y = 0;
+                int k = 0;
                 
 
 
@@ -255,33 +274,37 @@ namespace Artificial_Neural_network
                         double net = weights[0] * im.X0 + weights[1] * im.X1 - weights[2];
                         if (net > 0)
                         {
-                            o = 1;
-                            y = 1;
+                            o = 1;    
                         }
                         else
                         {
                             o = -1;
-                            y = 0;
-                            
                         }
 
-                        if (y != im.sınıf)// check the error
-                        {
+
+                        if (im.sınıf == 1)
+                            k = 1;
+                        else
+                            k = -1;
+
+
+
+                        if (o != k)// check the error
+                        {   
                             im.error = true;
                             error = true;
-                            MinimumSquarederror += ((im.sınıf - y) * (im.sınıf - y)) / 2; // E=1/2 *(d-o)*(d-o)
-                            weights[0] = weights[0] + learningcoefficent * (2) * im.X0 / 2; //updating weights w=w+1/2*c*(d-o)y
-                            weights[1] = weights[1] + learningcoefficent * (2) * im.X1 / 2; //updating weights
-                            weights[2] = weights[2] + learningcoefficent * (2) * -1 / 2; //updating weights
+                            MinimumSquarederror += ((k - 0) * (k - 0)) / 2; // E=1/2 *(d-o)*(d-o)
+                            weights[0] = weights[0] + learningcoefficent * (k-0)* im.X0 / 2; //updating weights w=w+1/2*c*(d-o)y
+                            weights[1] = weights[1] + learningcoefficent * (k - 0) * im.X1 / 2; //updating weights
+                            weights[2] = weights[2] + learningcoefficent * (k - 0) * -1 / 2; //updating weights
                         }
-
-
-                        drawing();
-
+    
                     }
 
                     // draw function on every update of weights
                     counter++;
+                    drawing();
+                    Weighttable(sender, e);
                     if (counter > maximumloopnumber)
                     {
                         MessageBox.Show(@"Unfortunately the total number of educational cycles exceeded the maximum.
@@ -292,7 +315,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                     }
                     else progressBar1.Value =(int) ((((double) counter) / ((double)maximumloopnumber))*100);
                 } // learning
-                MessageBox.Show(" operation is succesfull");
+                MessageBox.Show(" operation is succesfull \nTotal learning cycle:"+counter+"\nTotal Error:"+MinimumSquarederror);
             }
 
 
@@ -320,9 +343,10 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
 
             // multi layer and two category
-            else;
-
-
+            else
+            {
+                ;
+            }
         }
 
         private void button2_Click(object sender, EventArgs e) // continous perceptron leaning
@@ -392,22 +416,24 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
         private void radioButton4_CheckedChanged(object sender, EventArgs e) //multicategory checked ?
         {
-            if (radioButton4.Checked)
+            comboBox1.Items.Clear();
+            weights.Clear();
+            Random rast = new Random();
+            if (radioButton4.Checked) //if multicategory is choosen
             {
-                weights.Clear();
-                Random rast = new Random();
+                
+                
                 label8.Visible = true;
                 textBox2.Visible = true;
-                Random randa = new Random();
                 ccolor = new classs[Int32.Parse(textBox2.Text)];
                 for (int i = 0; i < Int32.Parse(textBox2.Text); i++)
                 {
                     ccolor[i] = new classs(i);
                     comboBox1.Items.Add(i + "");
                     ccolor[i].numara = i;
-                    ccolor[i].r = randa.Next(256);
-                    ccolor[i].g = randa.Next(256);
-                    ccolor[i].b = randa.Next(256);
+                    ccolor[i].r = rast.Next(256);
+                    ccolor[i].g = rast.Next(256);
+                    ccolor[i].b = rast.Next(256);
                     
                     weights.Add(rast.NextDouble());
                     weights.Add(rast.NextDouble());
@@ -418,10 +444,10 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
 
             }
-            else
+            else //if two category choosen
             {
-                weights.Clear();
-                Random rast = new Random();
+                
+                
                 weights.Add(rast.NextDouble());
                 weights.Add(rast.NextDouble());
                 weights.Add(rast.NextDouble());
@@ -453,39 +479,8 @@ You can try again by increasing the maximum number of cycles or by slightly chan
         {
 
         }
-        private void TabloEkle(int nRow, int nCol, int wCell)
-        {
-            // Tabloyu metinsel olarak çizmek için SringBuilder nesnesi
-            StringBuilder tableRtf = new StringBuilder();
 
-            // Tablo oluşturma formatının başlangıcı          
-            tableRtf.Append(@"{\rtf1 ");
-
-            // Döngünün dönüş sayısı satır sayısını belirleyecek
-            for (int i = 0; i < nRow; i++)
-            {
-                // satır oluştur
-                tableRtf.Append(@"\trowd");
-
-                for (int y = 1; y <= nCol; y++)
-                {
-                    // cell komutu ile yeni hücre oluşturalım
-                    tableRtf.Append(@"\cellx" + y * wCell);
-                    
-
-                }
-
-                // satır sonu
-                tableRtf.Append(@"\intbl \cell \row");
-            }
-
-            // Tablo çizimini kapatalım
-            tableRtf.Append(@"\pard");
-            tableRtf.Append(@"}");
-
-            // Son olarak hazırladığımız tablo çizimini RichTextbox'a atalım
-            this.richTextBox1.Rtf = tableRtf.ToString();
-        }
+        
         private static String InsertTableInRichTextBox(DataTable dtbl, int width)
         {
             //Since too much string appending go for string builder
@@ -540,7 +535,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
             sringTableRtf.Append(@"\pard");
             sringTableRtf.Append(@"}");
-
+            
             //convert the string builder to string
             return sringTableRtf.ToString();
         }
@@ -548,20 +543,117 @@ You can try again by increasing the maximum number of cycles or by slightly chan
         {
             //Create a DataTable with four columns.
             DataTable dtbl = new DataTable();
-            dtbl.Columns.Add("ID", typeof(int));
-            dtbl.Columns.Add("Name", typeof(string));
-            dtbl.Columns.Add("City", typeof(string));
-            dtbl.Columns.Add("Country", typeof(string));
+            dtbl.Columns.Add("Node No", typeof(int));
+            dtbl.Columns.Add("weight0", typeof(double));
+            dtbl.Columns.Add("weight1", typeof(double));
+            dtbl.Columns.Add("weight2", typeof(double));
 
-            //Here we add five DataRows.
-            dtbl.Rows.Add(1, "Ram", "Bangalore", "India");
-            dtbl.Rows.Add(2, "Manoj", "Mumbai", "India");
-            dtbl.Rows.Add(3, "Peter", "Chennai", "India");
-            dtbl.Rows.Add(4, "Eric", "Delhi", "India");
+            for (int i=0;i<weights.Count ;i+=3)
+            {
+                dtbl.Rows.Add(i/3, (Math.Truncate( weights[i]*1000))/1000, (Math.Truncate(weights[i+1] * 1000)) / 1000, (Math.Truncate(weights[i+2] * 1000)) / 1000);
+            }
+           
+            
+            this.richTextBox1.Rtf = InsertTableInRichTextBox(dtbl,700);
+        }
 
-            //Insert Table in RichTextBox Control by setting .Rtf as the string returned.
-            //Set the RichTextBox width to fit the table completely,
-            this.richTextBox1.Rtf = InsertTableInRichTextBox(dtbl, 2000);
+        private void radioButton2_CheckedChanged(object sender, EventArgs e) //radiobuton2 is multilayer buton
+        {
+            comboBox1.Items.Clear();
+            weights.Clear();
+            Random rast = new Random();
+
+
+            if (radioButton2.Checked) //if multilayer choosen
+            {
+                panel3.Visible = false;
+                weights.Add(rast.NextDouble());
+                weights.Add(rast.NextDouble());
+                weights.Add(rast.NextDouble());
+
+                ccolor = new classs[2];
+                for (int i = 0; i < 2; i++)
+                {
+                    ccolor[i] = new classs(i);
+                    ccolor[i].numara = i;
+                    ccolor[i].r = rast.Next(256);
+                    ccolor[i].g = rast.Next(256);
+                    ccolor[i].b = rast.Next(256);
+
+                    comboBox1.Items.Add(i + "");
+                }
+
+                label8.Visible = false;
+                textBox2.Visible = false;
+            }
+            else //single layer choosen
+            {
+                panel3.Visible = true;
+                if (radioButton4.Checked) //if multicategory is choosen
+                {
+                    
+                    label8.Visible = true;
+                    textBox2.Visible = true;
+                    ccolor = new classs[Int32.Parse(textBox2.Text)];
+                    for (int i = 0; i < Int32.Parse(textBox2.Text); i++)
+                    {
+                        ccolor[i] = new classs(i);
+                        comboBox1.Items.Add(i + "");
+                        ccolor[i].numara = i;
+                        ccolor[i].r = rast.Next(256);
+                        ccolor[i].g = rast.Next(256);
+                        ccolor[i].b = rast.Next(256);
+
+                        weights.Add(rast.NextDouble());
+                        weights.Add(rast.NextDouble());
+                        weights.Add(rast.NextDouble());
+
+                    }
+
+
+
+                }
+                else //if two category choosen
+                {
+                    
+                    weights.Add(rast.NextDouble());
+                    weights.Add(rast.NextDouble());
+                    weights.Add(rast.NextDouble());
+
+                    ccolor = new classs[2];
+                    for (int i = 0; i < 2; i++)
+                    {
+                        ccolor[i] = new classs(i);
+                        ccolor[i].numara = i;
+                        ccolor[i].r = rast.Next(256);
+                        ccolor[i].g = rast.Next(256);
+                        ccolor[i].b = rast.Next(256);
+
+                        comboBox1.Items.Add(i + "");
+                    }
+
+                    label8.Visible = false;
+                    textBox2.Visible = false;
+
+                }
+            }
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel2_Paint(object sender, PaintEventArgs e) //draw dimensions at start
+        {
+            grafik2.DrawLine(new Pen(Color.Black), new Point(0, panel2.Height / 2), new Point(panel2.Width, panel2.Height / 2));
+            grafik2.DrawLine(new Pen(Color.Pink), new Point(panel2.Width / 2, 0), new Point(panel2.Width / 2, panel2.Height));
+
         }
     }
 
