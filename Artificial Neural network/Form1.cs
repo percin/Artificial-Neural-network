@@ -99,14 +99,24 @@ namespace Artificial_Neural_network
 
             for (int i=0;i<weights.Count;i+=3)
             {
+                double w = panel1.Width / 2;
+                double h = panel1.Height / 2;
+                Graphics variable = grafik;
+
+
+                if (radioButton2.Checked && i==6)
+                {
+                     w = panel2.Width / 2;
+                     h = panel2.Height / 2;
+                     variable = grafik2;
+                }
 
                 if (weights[1 + i] == 0)
                     weights[1 + i] = 0.000001;
                 if (weights[ i] == 0)
                     weights[ i] = 0.000001;
 
-                double w = panel1.Width  / 2;
-                double h = panel1.Height / 2;
+                
 
                 double a = (weights[2 + i] - weights[0 + i] * h) / weights[1 + i];
                 if (h >a&& -h <a)
@@ -141,7 +151,7 @@ namespace Artificial_Neural_network
                 PointF p2 = new PointF((float)(lipstick[2]  +w), (float)(-lipstick[3]  + h));
 
                 //MessageBox.Show("p1 x:"+p1.X+"p1 y:"+p1.Y+"p2 x:"+p2.X+"p2 y:"+p2.Y);
-                grafik.DrawLine(pen, p1, p2);
+                variable.DrawLine(pen, p1, p2);
 
                 lipstick.Clear();
                 
@@ -247,16 +257,14 @@ namespace Artificial_Neural_network
             int counter = 0;
             bool error = true;
             double MinimumSquarederror = 0;
-            
+            int k = 0;
+            int o = 0;
 
             // single layer and two category
             if (radioButton1.Checked && radioButton3.Checked)
             {
                 
-                int o = 0;
-                int k = 0;
                 
-
 
                 while (error)
                 {
@@ -317,11 +325,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             else if (radioButton1.Checked && radioButton4.Checked)
             {
                 
-                int oo = 0;
-                int k = 0;
-
-
-
+               
                 while (error) //keep learning until there is no more error
                 {
                     error = false;
@@ -335,11 +339,11 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                             double net = weights[0+i*3] * im.X0 + weights[1 + i * 3] * im.X1 - weights[2 + i * 3];
                             if (net > 0)
                             {
-                                oo = 1;
+                                o = 1;
                             }
                             else
                             {
-                                oo = -1;
+                                o = -1;
                             }
 
 
@@ -350,14 +354,14 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
 
 
-                            if (oo != k)// check the error
+                            if (o != k)// check the error
                             {
                                 im.error = true;
                                 error = true;
-                                MinimumSquarederror += ((k - oo) * (k - oo)) / 2; // E=1/2 *(d-o)*(d-o)
-                                weights[0 + i * 3] = weights[0 + i * 3] + learningcoefficent * (k - oo) * im.X0 / 2; //updating weights w=w+1/2*c*(d-o)y
-                                weights[1 + i * 3] = weights[1 + i * 3] + learningcoefficent * (k - oo) * im.X1 / 2; //updating weights
-                                weights[2 + i * 3] = weights[2 + i * 3] + learningcoefficent * (k - oo) * -1 / 2; //updating weights
+                                MinimumSquarederror += ((k - o) * (k - o)) / 2; // E=1/2 *(d-o)*(d-o)
+                                weights[0 + i * 3] = weights[0 + i * 3] + learningcoefficent * (k - o) * im.X0 / 2; //updating weights w=w+1/2*c*(d-o)y
+                                weights[1 + i * 3] = weights[1 + i * 3] + learningcoefficent * (k - o) * im.X1 / 2; //updating weights
+                                weights[2 + i * 3] = weights[2 + i * 3] + learningcoefficent * (k - o) * -1 / 2; //updating weights
                             }
 
                         }
@@ -388,10 +392,97 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             }
 
 
-            // multi layer and two category
+            // multi layer exor
             else
             {
-                ;
+
+                
+                int i;
+                
+
+                
+
+                
+
+                
+                while ( error) 
+                {
+                    error = false;
+                    
+
+                    for (i = 0; i <= samples.Count - 1; i++) // her örnek icin bir step 
+                    {
+                        double x0 = samples[i].X0;
+                        double x1 = samples[i].X1;
+                        double y1, y2, y3;
+
+                        double net1 = (weights[0] * x0) + (weights[1] * x1) -1 * (weights[2]);
+                        if (0 < net1)
+                            y1 = 1;
+                        else
+                            y1 = -1;
+                        
+                        double net2 = (weights[3] * x0) + (weights[4] * x1) -1 * (weights[5]);
+                        if (0 < net2)
+                            y2 = 1;
+                        else
+                            y2 = -1;
+
+                        double net3 = (weights[6] * y1) + (weights[7] * y2) -1 * (weights[8]);
+                        if (0 < net3)
+                            y3 = 1;
+                        else
+                            y3 = -1;
+
+                        if (samples[i].sınıf==1)
+                            k=1;
+                        else
+                            k=-1;
+
+                        MinimumSquarederror += (k - y3) * (k - y3) / 2;
+
+                        double s3 = (k - y3);
+                        double s1 = weights[6] * s3;
+                        double s2 = weights[7] * s3;
+
+                        weights[6] += learningcoefficent * y1 * (k - y3) * 0.5;
+                        weights[7] += learningcoefficent * y2 * (k - y3) * 0.5;
+                        weights[8] += learningcoefficent * -1 * (k - y3) * 0.5;
+
+                        weights[3] += learningcoefficent * x0 * weights[7] * (k - y3) * 0.5;
+                        weights[4] += learningcoefficent * x1 * weights[7] * (k - y3) * 0.5;
+                        weights[5] += learningcoefficent * -1 * weights[7] * (k - y3) * 0.5;
+
+                        weights[0] += learningcoefficent * x0 * weights[6] * (k - y3) * 0.5 ;
+                        weights[1] += learningcoefficent * x1 * weights[6] * (k - y3) * 0.5 ; 
+                        weights[2] += learningcoefficent * -1 * weights[6] * (k - y3) * 0.5 ;
+
+
+                        
+                        
+
+
+                        
+                        //MessageBox.Show("hata0"+ s+"\nhata1"+hata1+"\nhata2"+hata2, "");
+                    }
+
+
+
+                    Weighttable(sender, e);
+                    drawing();  
+                    counter++;
+
+
+                } 
+
+                string basarı;
+                if (counter == maximumloopnumber)
+                    basarı = "maksimum iterasyon aşıldığı için başarısız";
+                else basarı = "başarılı";
+                string sonuc = "Başarı Durumu: " + basarı + "\nHata değeri: " + MinimumSquarederror + "\nCycle (iterasyon) sayısı : " + counter ;
+                MessageBox.Show(sonuc, "Öğrenme Sonucu:");
+                
+
             }
         }
 
@@ -616,9 +707,10 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             if (radioButton2.Checked) //if multilayer choosen
             {
                 panel3.Visible = false;
+
+                for(int i=0;i<9;i++)
                 weights.Add(rast.NextDouble());
-                weights.Add(rast.NextDouble());
-                weights.Add(rast.NextDouble());
+                
 
                 ccolor = new classs[2];
                 for (int i = 0; i < 2; i++)
@@ -632,6 +724,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                     comboBox1.Items.Add(i + "");
                 }
 
+                Weighttable(sender, e);
                 label8.Visible = false;
                 textBox2.Visible = false;
             }
@@ -658,7 +751,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                         weights.Add(rast.NextDouble());
 
                     }
-
+                    Weighttable(sender, e);
 
 
                 }
@@ -680,7 +773,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
                         comboBox1.Items.Add(i + "");
                     }
-
+                    Weighttable(sender, e);
                     label8.Visible = false;
                     textBox2.Visible = false;
 
