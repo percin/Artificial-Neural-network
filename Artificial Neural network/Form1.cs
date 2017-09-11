@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -10,7 +11,7 @@ namespace Artificial_Neural_network
 
     public partial class Form1 : Form
     {
-        
+
         // some variables 
         Graphics grafik;
         Graphics grafik2;
@@ -19,27 +20,27 @@ namespace Artificial_Neural_network
         classs[] ccolor;
         int maximumloopnumber = 200;
         double learningcoefficent = 1;
-        
 
 
-     
+
+
         public Form1()
         {
             InitializeComponent();
-            
+
         }
 
         private void trackBar1_Scroll(object sender, EventArgs e) // learning coefficent
         {
-            learningcoefficent =(double)trackBar1.Value / 10;
-            label7.Text=" "+ learningcoefficent;
-        } 
+            learningcoefficent = (double)trackBar1.Value / 10;
+            label7.Text = " " + learningcoefficent;
+        }
 
         private void panel1_Paint(object sender, PaintEventArgs e) //paint canvas in the start
         {
             grafik.DrawLine(new Pen(Color.Black), new Point(0, panel1.Height / 2), new Point(panel1.Width, panel1.Height / 2));
-            
-            grafik.DrawLine(new Pen(Color.Pink,2), new Point(panel1.Width / 2, 0), new Point(panel1.Width / 2, panel1.Height));
+
+            grafik.DrawLine(new Pen(Color.Pink, 2), new Point(panel1.Width / 2, 0), new Point(panel1.Width / 2, panel1.Height));
 
         }
 
@@ -47,10 +48,10 @@ namespace Artificial_Neural_network
         {
             grafik = panel1.CreateGraphics();
             grafik2 = panel2.CreateGraphics();
-            grafik.SmoothingMode= System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            grafik.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             label7.Text = " " + (double)trackBar1.Value / 10;
-            learningcoefficent= (double)trackBar1.Value / 10;
-            maximumloopnumber= Int32.Parse(textBox1.Text);
+            learningcoefficent = (double)trackBar1.Value / 10;
+            maximumloopnumber = Int32.Parse(textBox1.Text);
 
             progressBar1.Minimum = 0;
             progressBar1.Maximum = 100;
@@ -60,7 +61,7 @@ namespace Artificial_Neural_network
             weights.Add(rast.NextDouble());
             weights.Add(rast.NextDouble());
 
-            Weighttable(sender,e);
+            Weighttable(sender, e);
 
 
 
@@ -83,8 +84,9 @@ namespace Artificial_Neural_network
             }
 
 
-
+            //////
             
+
         }
 
         private void drawing() //  first drawing axis,functions and call drawpoints function
@@ -97,64 +99,64 @@ namespace Artificial_Neural_network
 
             Pen pen = new Pen(Color.DarkGreen);
 
-            for (int i=0;i<weights.Count;i+=3)
+            for (int i = 0; i < weights.Count; i += 3)
             {
                 double w = panel1.Width / 2;
                 double h = panel1.Height / 2;
                 Graphics variable = grafik;
 
 
-                if (radioButton2.Checked && i==6)
+                if (radioButton2.Checked && i == 6)
                 {
-                     w = panel2.Width / 2;
-                     h = panel2.Height / 2;
-                     variable = grafik2;
+                    w = panel2.Width / 2;
+                    h = panel2.Height / 2;
+                    variable = grafik2;
                 }
 
                 if (weights[1 + i] == 0)
                     weights[1 + i] = 0.000001;
-                if (weights[ i] == 0)
-                    weights[ i] = 0.000001;
+                if (weights[i] == 0)
+                    weights[i] = 0.000001;
 
-                
+
 
                 double a = (weights[2 + i] - weights[0 + i] * h) / weights[1 + i];
-                if (h >a&& -h <a)
+                if (h > a && -h < a)
                 {
                     lipstick.Add(w);
                     lipstick.Add(a);
                 }
 
                 a = (weights[2 + i] - weights[0 + i] * -h) / weights[1 + i];
-                if (h >a&& -h <a)
+                if (h > a && -h < a)
                 {
                     lipstick.Add(-w);
                     lipstick.Add(a);
                 }
 
                 a = (weights[2 + i] - weights[1 + i] * w) / weights[0 + i];
-                if (w >a&& -w <a)
+                if (w > a && -w < a)
                 {
                     lipstick.Add(a);
                     lipstick.Add(h);
                 }
 
                 a = (weights[2 + i] - weights[1 + i] * -w) / weights[0 + i];
-                if (w >a&& -w <a)
+                if (w > a && -w < a)
                 {
                     lipstick.Add(a);
                     lipstick.Add(-h);
                 }
 
-                
-                PointF p1 = new PointF((float)(lipstick[0]+w), (float)(-lipstick[1]  + h));
-                PointF p2 = new PointF((float)(lipstick[2]  +w), (float)(-lipstick[3]  + h));
+
+                PointF p1 = new PointF((float)(lipstick[0] + w), (float)(-lipstick[1] + h));
+                PointF p2 = new PointF((float)(lipstick[2] + w), (float)(-lipstick[3] + h));
 
                 //MessageBox.Show("p1 x:"+p1.X+"p1 y:"+p1.Y+"p2 x:"+p2.X+"p2 y:"+p2.Y);
                 variable.DrawLine(pen, p1, p2);
 
                 lipstick.Clear();
-                
+
             }
             drawpoints();
 
@@ -163,7 +165,7 @@ namespace Artificial_Neural_network
 
         private void panel1_MouseClick(object sender, MouseEventArgs e)
         {
-            
+
         }
 
         private void panel1_MouseDown(object sender, MouseEventArgs e)
@@ -173,22 +175,22 @@ namespace Artificial_Neural_network
 
 
 
-            double posX = (double)(e.X - panel1.Width / 2) ;
-            double posY = (double)(panel1.Height / 2 - e.Y) ;
+            double posX = (double)(e.X - panel1.Width / 2);
+            double posY = (double)(panel1.Height / 2 - e.Y);
 
-          
 
-            pen = new Pen(Color.FromArgb(ccolor[int.Parse(comboBox1.Text)].r, ccolor[int.Parse(comboBox1.Text)].g, ccolor[int.Parse(comboBox1.Text)].b),2);
+
+            pen = new Pen(Color.FromArgb(ccolor[int.Parse(comboBox1.Text)].r, ccolor[int.Parse(comboBox1.Text)].g, ccolor[int.Parse(comboBox1.Text)].b), 2);
             sample = new point(posX, posY, Int32.Parse(comboBox1.Text));
 
-            
+
 
 
             samples.Add(sample);
             MessageBox.Show("adding point location : \n x  location:  " + posX + "\n y  location:  " + posY + "   ", "");
             grafik.DrawLine(pen, new Point(e.X - 3, e.Y), new Point(e.X + 3, e.Y)); // x y noktasına 6 ya 6 birimlik  + isareti konuyor
             grafik.DrawLine(pen, new Point(e.X, e.Y - 3), new Point(e.X, e.Y + 3));
-            
+
         } // when click draw a point and add in 
 
         private void button3_Click(object sender, EventArgs e) // save point location button
@@ -196,18 +198,18 @@ namespace Artificial_Neural_network
             string dosya = "save.txt";
             FileStream fs = new FileStream(dosya, FileMode.Create, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
-            
+
             foreach (point sample in samples)
             {
-                
+
                 string word = sample.X0.ToString("0.000000");
                 sw.WriteLine(word);
-                
+
                 word = sample.X1.ToString("0.000000");
                 sw.WriteLine(word);
                 word = sample.sınıf.ToString("0.000000");
                 sw.WriteLine(word);
-                
+
             }
 
             sw.Flush();
@@ -224,14 +226,14 @@ namespace Artificial_Neural_network
 
             FileStream fs = new FileStream("save.txt", FileMode.Open, FileAccess.Read);
             StreamReader sw = new StreamReader(fs);
-            
+
             while (true)
             {
 
                 string asd = sw.ReadLine();
                 if (asd == null) break;
                 string s = Convert.ToDouble(asd) + "";
-                
+
 
                 double x = Convert.ToDouble(asd);
                 double y = Convert.ToDouble(sw.ReadLine());
@@ -252,8 +254,8 @@ namespace Artificial_Neural_network
 
         private void button1_Click(object sender, EventArgs e) // dicscrete perceptron learning
         {
-           
-            
+
+
             int counter = 0;
             bool error = true;
             double MinimumSquarederror = 0;
@@ -263,8 +265,8 @@ namespace Artificial_Neural_network
             // single layer and two category
             if (radioButton1.Checked && radioButton3.Checked)
             {
-                
-                
+
+
 
                 while (error)
                 {
@@ -276,7 +278,7 @@ namespace Artificial_Neural_network
                         double net = weights[0] * im.X0 + weights[1] * im.X1 - weights[2];
                         if (net > 0)
                         {
-                            o = 1;    
+                            o = 1;
                         }
                         else
                         {
@@ -292,15 +294,15 @@ namespace Artificial_Neural_network
 
 
                         if (o != k)// check the error
-                        {   
+                        {
                             im.error = true;
                             error = true;
                             MinimumSquarederror += ((k - o) * (k - o)) / 2; // E=1/2 *(d-o)*(d-o)
-                            weights[0] = weights[0] + learningcoefficent * (k - o)* im.X0 / 2; //updating weights w=w+1/2*c*(d-o)y
+                            weights[0] = weights[0] + learningcoefficent * (k - o) * im.X0 / 2; //updating weights w=w+1/2*c*(d-o)y
                             weights[1] = weights[1] + learningcoefficent * (k - o) * im.X1 / 2; //updating weights
                             weights[2] = weights[2] + learningcoefficent * (k - o) * -1 / 2; //updating weights
                         }
-    
+
                     }
 
                     // draw function on every update of weights
@@ -315,17 +317,17 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                         MessageBox.Show("" + MinimumSquarederror + "" + error + "" + learningcoefficent);
                         return;
                     }
-                    else progressBar1.Value =(int) ((((double) counter) / ((double)maximumloopnumber))*100);
+                    else progressBar1.Value = (int)((((double)counter) / ((double)maximumloopnumber)) * 100);
                 } // learning
-                MessageBox.Show(" operation is succesfull \nTotal learning cycle:"+counter+"\nTotal Error:"+MinimumSquarederror);
+                MessageBox.Show(" operation is succesfull \nTotal learning cycle:" + counter + "\nTotal Error:" + MinimumSquarederror);
             }
 
 
             // single layer and multi category
             else if (radioButton1.Checked && radioButton4.Checked)
             {
-                
-               
+
+
                 while (error) //keep learning until there is no more error
                 {
                     error = false;
@@ -334,9 +336,9 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                     foreach (point im in samples) //control every point
                     {
                         im.error = false;
-                        for (int i=0;i<ccolor.Length ;i++) // control with every category
+                        for (int i = 0; i < ccolor.Length; i++) // control with every category
                         {
-                            double net = weights[0+i*3] * im.X0 + weights[1 + i * 3] * im.X1 - weights[2 + i * 3];
+                            double net = weights[0 + i * 3] * im.X0 + weights[1 + i * 3] * im.X1 - weights[2 + i * 3];
                             if (net > 0)
                             {
                                 o = 1;
@@ -366,8 +368,8 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
                         }
 
-                        
-                        
+
+
 
                     }
 
@@ -396,19 +398,19 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             else
             {
 
-                
+
                 int i;
-                
 
-                
 
-                
 
-                
-                while ( error) 
+
+
+
+
+                while (error)
                 {
                     error = false;
-                    
+
 
                     for (i = 0; i <= samples.Count - 1; i++) // her örnek icin bir step 
                     {
@@ -416,28 +418,28 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                         double x1 = samples[i].X1;
                         double y1, y2, y3;
 
-                        double net1 = (weights[0] * x0) + (weights[1] * x1) -1 * (weights[2]);
+                        double net1 = (weights[0] * x0) + (weights[1] * x1) - 1 * (weights[2]);
                         if (0 < net1)
                             y1 = 1;
                         else
                             y1 = -1;
-                        
-                        double net2 = (weights[3] * x0) + (weights[4] * x1) -1 * (weights[5]);
+
+                        double net2 = (weights[3] * x0) + (weights[4] * x1) - 1 * (weights[5]);
                         if (0 < net2)
                             y2 = 1;
                         else
                             y2 = -1;
 
-                        double net3 = (weights[6] * y1) + (weights[7] * y2) -1 * (weights[8]);
+                        double net3 = (weights[6] * y1) + (weights[7] * y2) - 1 * (weights[8]);
                         if (0 < net3)
                             y3 = 1;
                         else
                             y3 = -1;
 
-                        if (samples[i].sınıf==1)
-                            k=1;
+                        if (samples[i].sınıf == 1)
+                            k = 1;
                         else
-                            k=-1;
+                            k = -1;
 
                         MinimumSquarederror += (k - y3) * (k - y3) / 2;
 
@@ -453,42 +455,42 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                         weights[4] += learningcoefficent * x1 * weights[7] * (k - y3) * 0.5;
                         weights[5] += learningcoefficent * -1 * weights[7] * (k - y3) * 0.5;
 
-                        weights[0] += learningcoefficent * x0 * weights[6] * (k - y3) * 0.5 ;
-                        weights[1] += learningcoefficent * x1 * weights[6] * (k - y3) * 0.5 ; 
-                        weights[2] += learningcoefficent * -1 * weights[6] * (k - y3) * 0.5 ;
+                        weights[0] += learningcoefficent * x0 * weights[6] * (k - y3) * 0.5;
+                        weights[1] += learningcoefficent * x1 * weights[6] * (k - y3) * 0.5;
+                        weights[2] += learningcoefficent * -1 * weights[6] * (k - y3) * 0.5;
 
 
-                        
-                        
 
 
-                        
+
+
+
                         //MessageBox.Show("hata0"+ s+"\nhata1"+hata1+"\nhata2"+hata2, "");
                     }
 
 
 
                     Weighttable(sender, e);
-                    drawing();  
+                    drawing();
                     counter++;
 
 
-                } 
+                }
 
                 string basarı;
                 if (counter == maximumloopnumber)
                     basarı = "maksimum iterasyon aşıldığı için başarısız";
                 else basarı = "başarılı";
-                string sonuc = "Başarı Durumu: " + basarı + "\nHata değeri: " + MinimumSquarederror + "\nCycle (iterasyon) sayısı : " + counter ;
+                string sonuc = "Başarı Durumu: " + basarı + "\nHata değeri: " + MinimumSquarederror + "\nCycle (iterasyon) sayısı : " + counter;
                 MessageBox.Show(sonuc, "Öğrenme Sonucu:");
-                
+
 
             }
         }
 
         private void button2_Click(object sender, EventArgs e) // continous perceptron leaning
         {
-            
+            gui();
         }
 
         private void drawpoints() // drawing points in list
@@ -496,23 +498,23 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             foreach (point sample in samples)
             {
 
-                double posX = (panel1.Width / 2) + sample.X0 ;
-                double posY = (panel1.Height / 2) - sample.X1 ;
+                double posX = (panel1.Width / 2) + sample.X0;
+                double posY = (panel1.Height / 2) - sample.X1;
 
                 Pen pen;
-               
-                pen = new Pen(Color.FromArgb(ccolor[(int)sample.sınıf].r, ccolor[(int)sample.sınıf].g, ccolor[(int)sample.sınıf].b),2);
-                
-                
+
+                pen = new Pen(Color.FromArgb(ccolor[(int)sample.sınıf].r, ccolor[(int)sample.sınıf].g, ccolor[(int)sample.sınıf].b), 2);
+
+
                 //drawing points
                 grafik.DrawLine(pen, new Point((int)posX - 3, (int)posY), new Point((int)posX + 3, (int)posY));
                 grafik.DrawLine(pen, new Point((int)posX, (int)posY - 3), new Point((int)posX, (int)posY + 3));
 
                 pen = new Pen(Color.Red);
-                if(sample.error==true)
+                if (sample.error == true)
                 {
-                    Rectangle r1=new Rectangle((int)posX-5, (int)posY-5 , 10 , 10 );
-                    grafik.DrawEllipse(pen,r1);
+                    Rectangle r1 = new Rectangle((int)posX - 5, (int)posY - 5, 10, 10);
+                    grafik.DrawEllipse(pen, r1);
                 }
             }
         }
@@ -525,7 +527,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
             // drawing dimensions
             grafik.DrawLine(new Pen(Color.Black), new Point(0, panel1.Height / 2), new Point(panel1.Width, panel1.Height / 2));
-            grafik.DrawLine(new Pen(Color.Pink,2), new Point(panel1.Width / 2, 0), new Point(panel1.Width / 2, panel1.Height));
+            grafik.DrawLine(new Pen(Color.Pink, 2), new Point(panel1.Width / 2, 0), new Point(panel1.Width / 2, panel1.Height));
 
         }
 
@@ -548,7 +550,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                 ccolor[i].g = randa.Next(256);
                 ccolor[i].b = randa.Next(256);
             }
-            button5_Click( sender,  e);
+            button5_Click(sender, e);
         }
 
         private void radioButton4_CheckedChanged(object sender, EventArgs e) //multicategory checked ?
@@ -559,8 +561,8 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             Random rast = new Random();
             if (radioButton4.Checked) //if multicategory is choosen
             {
-                
-                
+
+
                 label8.Visible = true;
                 textBox2.Visible = true;
                 ccolor = new classs[Int32.Parse(textBox2.Text)];
@@ -572,7 +574,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                     ccolor[i].r = rast.Next(256);
                     ccolor[i].g = rast.Next(256);
                     ccolor[i].b = rast.Next(256);
-                    
+
                     weights.Add(rast.NextDouble());
                     weights.Add(rast.NextDouble());
                     weights.Add(rast.NextDouble());
@@ -584,8 +586,8 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             }
             else //if two category choosen
             {
-                
-                
+
+
                 weights.Add(rast.NextDouble());
                 weights.Add(rast.NextDouble());
                 weights.Add(rast.NextDouble());
@@ -618,7 +620,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
         }
 
-        
+
         private static String InsertTableInRichTextBox(DataTable dtbl, int width)
         {
             //Since too much string appending go for string builder
@@ -634,7 +636,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             sringTableRtf.Append(@"\trowd");
 
             //Populate the Table header from DataTable column headings.
-            for (int j = 0; j <  dtbl.Columns.Count; j++)
+            for (int j = 0; j < dtbl.Columns.Count; j++)
             {
                 //A cell with width 1000.
                 sringTableRtf.Append(@"\cellx" + ((j + 1) * width).ToString());
@@ -650,12 +652,12 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
             //Loop to populate the table cell data from DataTable
             for (int i = 0; i < dtbl.Rows.Count; i++)
-      {
+            {
                 //Start the Row
                 sringTableRtf.Append(@"\trowd");
 
                 for (int j = 0; j < dtbl.Columns.Count; j++)
-          {
+                {
                     cellWidth = (j + 1) * width;
 
                     //A cell with width 1000.
@@ -673,7 +675,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
             sringTableRtf.Append(@"\pard");
             sringTableRtf.Append(@"}");
-            
+
             //convert the string builder to string
             return sringTableRtf.ToString();
         }
@@ -686,13 +688,13 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             dtbl.Columns.Add("weight1", typeof(double));
             dtbl.Columns.Add("weight2", typeof(double));
 
-            for (int i=0;i<weights.Count ;i+=3)
+            for (int i = 0; i < weights.Count; i += 3)
             {
-                dtbl.Rows.Add(i/3, (Math.Truncate( weights[i]*1000))/1000, (Math.Truncate(weights[i+1] * 1000)) / 1000, (Math.Truncate(weights[i+2] * 1000)) / 1000);
+                dtbl.Rows.Add(i / 3, (Math.Truncate(weights[i] * 1000)) / 1000, (Math.Truncate(weights[i + 1] * 1000)) / 1000, (Math.Truncate(weights[i + 2] * 1000)) / 1000);
             }
-           
-            
-            this.richTextBox1.Rtf = InsertTableInRichTextBox(dtbl,700);
+
+
+            this.richTextBox1.Rtf = InsertTableInRichTextBox(dtbl, 700);
         }
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e) //radiobuton2 is multilayer buton
@@ -708,9 +710,9 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             {
                 panel3.Visible = false;
 
-                for(int i=0;i<9;i++)
-                weights.Add(rast.NextDouble());
-                
+                for (int i = 0; i < 9; i++)
+                    weights.Add(rast.NextDouble());
+
 
                 ccolor = new classs[2];
                 for (int i = 0; i < 2; i++)
@@ -733,7 +735,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                 panel3.Visible = true;
                 if (radioButton4.Checked) //if multicategory is choosen
                 {
-                    
+
                     label8.Visible = true;
                     textBox2.Visible = true;
                     ccolor = new classs[Int32.Parse(textBox2.Text)];
@@ -757,7 +759,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                 }
                 else //if two category choosen
                 {
-                    
+
                     weights.Add(rast.NextDouble());
                     weights.Add(rast.NextDouble());
                     weights.Add(rast.NextDouble());
@@ -807,6 +809,38 @@ You can try again by increasing the maximum number of cycles or by slightly chan
         {
 
         }
+
+        public void drawbutton(double x,double y,double xsize=20,double ysize=20)
+        {
+            int x1 = (int)x;
+            int y1 = (int)y;
+            int xsize1 = (int)xsize+869;
+            int ysize1 = (int)ysize+248;
+
+            ShapedButton elips_Buton = new ShapedButton();
+
+            elips_Buton.Size = new Size(xsize1,ysize1);
+
+            elips_Buton.Location = new Point(x1,y1 );
+
+            elips_Buton.FlatAppearance.BorderSize = 0;
+
+            elips_Buton.BackColor = Color.Blue;
+
+            elips_Buton.FlatStyle = FlatStyle.Flat;
+
+            this.Controls.Add(elips_Buton);
+        }
+
+        public void gui()
+        {
+            drawbutton(100, 100);
+            drawbutton(100, 200);
+            drawbutton(100, 300);
+
+
+
+        }
     }
 
     public class point
@@ -842,7 +876,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             get { return snf; }
             set { this.snf = value; }
         }
-        
+
     } // ornek
 
     public class classs
@@ -860,4 +894,30 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             numara = i;
         }
     } // sınıf
+
+    public class ShapedButton : Button
+
+    {
+
+        protected override void OnResize(EventArgs e)
+
+        {
+
+            base.OnResize(e);
+
+            GraphicsPath gp = new GraphicsPath();
+
+            // this.Size ın en boyu aynı oldugundan elips bir şekil oluşuyor
+
+            gp.AddEllipse(new Rectangle(Point.Empty, this.Size));
+
+            // oluşan yeni elips şekli oluşturulan butona atanıyor
+
+            this.Region = new Region(gp);
+
+            // Butonun yeni şekli elips oluyor
+
+        }
+    }
+
 }
