@@ -20,7 +20,7 @@ namespace Artificial_Neural_network
         classs[] ccolor;
         int maximumloopnumber = 200;
         double learningcoefficent = 1;
-
+        private List<Button> dynamicbuttons = new List<Button>();
 
 
 
@@ -491,6 +491,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
         private void button2_Click(object sender, EventArgs e) // continous perceptron leaning
         {
             gui();
+            
         }
 
         private void drawpoints() // drawing points in list
@@ -812,10 +813,10 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
         public void drawbutton(double x,double y,double xsize=20,double ysize=20)
         {
-            int x1 = (int)x;
-            int y1 = (int)y;
-            int xsize1 = (int)xsize+869;
-            int ysize1 = (int)ysize+248;
+            int x1 = (int)x + 869;
+            int y1 = (int)y + 248;
+            int xsize1 = (int)xsize;
+            int ysize1 = (int)ysize;
 
             ShapedButton elips_Buton = new ShapedButton();
 
@@ -828,17 +829,71 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             elips_Buton.BackColor = Color.Blue;
 
             elips_Buton.FlatStyle = FlatStyle.Flat;
-
+            
+            dynamicbuttons.Add(elips_Buton);
             this.Controls.Add(elips_Buton);
+        }
+        
+        public void drawline(int x,int y,int x2,int y2,int width=2)
+        {
+            Graphics g;
+
+            
+
+            g = this.CreateGraphics();
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            Pen myPen = new Pen(Color.Red);
+            myPen.Width = width;
+            g.DrawLine(myPen, x+869, y+248, x2+869, y2+248);
+
+            
+
         }
 
         public void gui()
         {
-            drawbutton(100, 100);
-            drawbutton(100, 200);
-            drawbutton(100, 300);
+            int k = 13;
+            int e = 9;
+            foreach (Button b in dynamicbuttons)
+                this.Controls.Remove(b);
+            drawbutton(100, 100,30,30);
+            drawbutton(100, 200, 30, 30);
+            drawbutton(100, 300, 30, 30);
+            int number=weights.Count / 3;
+            switch (number)
+            {
+                case 1:
+                    {
+                        
+                        drawbutton(250,200);
+                        drawline(100+k,100 + k, 250+e,200+e);
+                        drawline(100 + k, 200 + k, 250+e, 200+e);
+                        drawline(100 + k, 300 + k, 250+e, 200+e);
+                    }
+                    break;
+                case 2:
+                    {
+                        drawbutton(250,150);
+                        drawline(100 + k, 100 + k, 250 + e, 150 + e);
+                        drawline(100 + k, 200 + k, 250 + e, 150 + e);
+                        drawline(100 + k, 300 + k, 250 + e, 150 + e);
+                        drawbutton(250,250);
+                        drawline(100 + k, 100 + k, 250 + e, 250 + e);
+                        drawline(100 + k, 200 + k, 250 + e, 250 + e);
+                        drawline(100 + k, 300 + k, 250 + e, 250 + e);
+                    }
+                    break;
+                default:
+                    {
+                        int length = 440 /( number-1);
+                        for (int i = 0; i < number; i++)
+                            drawbutton(250,i*length);
+                    }
+                    break;
 
+            }
 
+            
 
         }
     }
@@ -909,7 +964,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
             // this.Size ın en boyu aynı oldugundan elips bir şekil oluşuyor
 
-            gp.AddEllipse(new Rectangle(Point.Empty, this.Size));
+            gp.AddEllipse(new Rectangle(Point.Empty, Size));
 
             // oluşan yeni elips şekli oluşturulan butona atanıyor
 
