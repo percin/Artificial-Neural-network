@@ -6,6 +6,7 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+
 namespace Artificial_Neural_network
 {
 
@@ -21,7 +22,8 @@ namespace Artificial_Neural_network
         int maximumloopnumber = 200;
         double learningcoefficent = 1;
         private List<Button> dynamicbuttons = new List<Button>();
-
+        private List<int> weightstring = new List<int>();
+        List<int> lines = new List<int>();
 
 
         public Form1()
@@ -38,14 +40,16 @@ namespace Artificial_Neural_network
 
         private void panel1_Paint(object sender, PaintEventArgs e) //paint canvas in the start
         {
+           
             grafik.DrawLine(new Pen(Color.Black), new Point(0, panel1.Height / 2), new Point(panel1.Width, panel1.Height / 2));
-
             grafik.DrawLine(new Pen(Color.Pink, 2), new Point(panel1.Width / 2, 0), new Point(panel1.Width / 2, panel1.Height));
 
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
+            ResizeRedraw = true;
             grafik = panel1.CreateGraphics();
             grafik2 = panel2.CreateGraphics();
             grafik.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
@@ -83,13 +87,12 @@ namespace Artificial_Neural_network
                 comboBox1.Items.Add(i + "");
             }
 
+           
 
-            //////
-            
 
         }
 
-        private void drawing() //  first drawing axis,functions and call drawpoints function
+        private void drawing(bool updatepointErrors=false) //  first drawing axis,functions and call drawpoints function
         {
             List<double> lipstick = new List<double>();
             grafik.Clear(Color.White);
@@ -97,7 +100,7 @@ namespace Artificial_Neural_network
             grafik.DrawLine(new Pen(Color.Black), new Point(0, panel1.Height / 2), new Point(panel1.Width, panel1.Height / 2));
             grafik.DrawLine(new Pen(Color.Black), new Point(panel1.Width / 2, 0), new Point(panel1.Width / 2, panel1.Height));
 
-            Pen pen = new Pen(Color.DarkGreen);
+            Pen pen = new Pen(Color.DarkGreen,3);
 
             for (int i = 0; i < weights.Count; i += 3)
             {
@@ -148,17 +151,27 @@ namespace Artificial_Neural_network
                     lipstick.Add(-h);
                 }
 
+                pen.Color = Color.FromArgb(ccolor[i/3].r, ccolor[i / 3].g, ccolor[i / 3].b) ; 
 
-                PointF p1 = new PointF((float)(lipstick[0] + w), (float)(-lipstick[1] + h));
-                PointF p2 = new PointF((float)(lipstick[2] + w), (float)(-lipstick[3] + h));
+                try
+                {
+                    PointF p1 = new PointF((float)(lipstick[0] + w), (float)(-lipstick[1] + h));
+                    PointF p2 = new PointF((float)(lipstick[2] + w), (float)(-lipstick[3] + h));
+                    variable.DrawLine(pen, p1, p2);
+                }
+                catch (Exception hata)
+                {
+                    MessageBox.Show("çizim fonksiyonunda hata oldu :"+hata.Message);
+                }
+                
 
                 //MessageBox.Show("p1 x:"+p1.X+"p1 y:"+p1.Y+"p2 x:"+p2.X+"p2 y:"+p2.Y);
-                variable.DrawLine(pen, p1, p2);
+                
 
                 lipstick.Clear();
 
-            }
-            drawpoints();
+            } //draw all lines
+            drawpoints(updatepointErrors);
 
 
         }
@@ -255,7 +268,7 @@ namespace Artificial_Neural_network
         private void button1_Click(object sender, EventArgs e) // dicscrete perceptron learning
         {
 
-
+            
             int counter = 0;
             bool error = true;
             double MinimumSquarederror = 0;
@@ -315,10 +328,13 @@ namespace Artificial_Neural_network
 And the training failed.
 You can try again by increasing the maximum number of cycles or by slightly changing the sample set. \n Total cycle number= " + counter, "Big failure with over try", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         MessageBox.Show("" + MinimumSquarederror + "" + error + "" + learningcoefficent);
+                        drawing(true);
+                        gui();
                         return;
                     }
                     else progressBar1.Value = (int)((((double)counter) / ((double)maximumloopnumber)) * 100);
                 } // learning
+                
                 MessageBox.Show(" operation is succesfull \nTotal learning cycle:" + counter + "\nTotal Error:" + MinimumSquarederror);
             }
 
@@ -377,6 +393,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                     counter++;
                     drawing();
                     Weighttable(sender, e);
+                    
                     if (counter > maximumloopnumber)
                     {
                         MessageBox.Show(@"Unfortunately the total number of educational cycles exceeded the maximum.
@@ -384,12 +401,13 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                         You can try again by increasing the maximum number of cycles or by slightly changing 
                         the sample set. \n Total cycle number= " + counter, "Big failure with over try", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         MessageBox.Show("" + MinimumSquarederror + "" + error + "" + learningcoefficent);
+                        drawing(true);
                         return;
                     }
                     else progressBar1.Value = (int)((((double)counter) / ((double)maximumloopnumber)) * 100);
                 } // learning
                 MessageBox.Show(" operation is succesfull \nTotal learning cycle:" + counter + "\nTotal Error:" + MinimumSquarederror);
-
+                
 
             }
 
@@ -400,8 +418,6 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
 
                 int i;
-
-
 
 
 
@@ -477,25 +493,48 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
                 }
 
-                string basarı;
+                string success;
                 if (counter == maximumloopnumber)
-                    basarı = "maksimum iterasyon aşıldığı için başarısız";
-                else basarı = "başarılı";
-                string sonuc = "Başarı Durumu: " + basarı + "\nHata değeri: " + MinimumSquarederror + "\nCycle (iterasyon) sayısı : " + counter;
+                    success = "maksimum iterasyon aşıldığı için başarısız";
+                else success = "başarılı";
+                string sonuc = "Başarı Durumu: " + success + "\nHata değeri: " + MinimumSquarederror + "\nCycle (iterasyon) sayısı : " + counter;
                 MessageBox.Show(sonuc, "Öğrenme Sonucu:");
 
 
             }
+            gui();
         }
 
         private void button2_Click(object sender, EventArgs e) // continous perceptron leaning
         {
             gui();
-            
         }
 
-        private void drawpoints() // drawing points in list
+        private void drawpoints(bool updatepointError=false) // drawing points in list
         {
+
+            if (updatepointError)
+            {
+                int o, k;
+                foreach (point im in samples)
+                {
+                    im.error = false;
+                    double net = weights[0] * im.X0 + weights[1] * im.X1 - weights[2];
+                    if (net > 0)
+                        o = 1;
+                    else
+                        o = -1;
+                    if (im.sınıf == 1)
+                        k = 1;
+                    else
+                        k = -1;
+                    
+                    if (o != k)// check the error
+                        im.error = true;
+                    }
+
+            }
+
             foreach (point sample in samples)
             {
 
@@ -522,6 +561,15 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
         public void button5_Click(object sender, EventArgs e) // clear button which clear
         {
+
+            progressBar1.Value = 0;
+            lines.Clear();
+            weightstring.Clear();
+            foreach (Button b in dynamicbuttons)
+                this.Controls.Remove(b);
+            Invalidate();
+
+
             samples.Clear(); // erase points           
             grafik.Clear(Color.White); // cleaning
 
@@ -539,19 +587,31 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            comboBox1.Items.Clear();
-            Random randa = new Random();
-            ccolor = new classs[Int32.Parse(textBox2.Text)];
-            for (int i = 0; i < Int32.Parse(textBox2.Text); i++)
-            {
-                ccolor[i] = new classs(i);
-                comboBox1.Items.Add(i + "");
-                ccolor[i].numara = i;
-                ccolor[i].r = randa.Next(256);
-                ccolor[i].g = randa.Next(256);
-                ccolor[i].b = randa.Next(256);
-            }
             button5_Click(sender, e);
+            comboBox1.Items.Clear();
+            weights.Clear();
+            Random rast = new Random();
+            ccolor = new classs[Int32.Parse(textBox2.Text)];
+                for (int i = 0; i < Int32.Parse(textBox2.Text); i++)
+                {
+                    ccolor[i] = new classs(i);
+                    comboBox1.Items.Add(i + "");
+                    ccolor[i].numara = i;
+                    ccolor[i].r = rast.Next(256);
+                    ccolor[i].g = rast.Next(256);
+                    ccolor[i].b = rast.Next(256);
+
+                    weights.Add(rast.NextDouble());
+                    weights.Add(rast.NextDouble());
+                    weights.Add(rast.NextDouble());
+
+                }
+            Weighttable(sender, e);
+            gui();
+             
+            
+            ////////////////////////////////////
+            
         }
 
         private void radioButton4_CheckedChanged(object sender, EventArgs e) //multicategory checked ?
@@ -609,6 +669,8 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                 textBox2.Visible = false;
                 Weighttable(sender, e);
             }
+
+            gui();
         }
 
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
@@ -781,6 +843,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                     textBox2.Visible = false;
 
                 }
+                gui();
             }
         }
 
@@ -796,6 +859,7 @@ You can try again by increasing the maximum number of cycles or by slightly chan
 
         private void panel2_Paint(object sender, PaintEventArgs e) //draw dimensions at start
         {
+           
             grafik2.DrawLine(new Pen(Color.Black), new Point(0, panel2.Height / 2), new Point(panel2.Width, panel2.Height / 2));
             grafik2.DrawLine(new Pen(Color.Pink), new Point(panel2.Width / 2, 0), new Point(panel2.Width / 2, panel2.Height));
 
@@ -833,32 +897,81 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             dynamicbuttons.Add(elips_Buton);
             this.Controls.Add(elips_Buton);
         }
-        
-        public void drawline(int x,int y,int x2,int y2,int width=2)
-        {
-            Graphics g;
+
+        //public void Drawweightlabel(double weight,int locationx1,int locationy1,int locationx2,int locationy2,int sizex=64,int sizey=64)
+        //{
+        //    // mylabel a = new mylabel();
+        //    // a.Location = new Point((2*locationx1+locationx2)/3+869-(sizex/2), (2*locationy1 + locationy2) / 3+248-(sizey/2));
+        //    // a.Location = new Point(locationx1 + 869-62, locationy1  + 248-62);
+        //    // a.Size = new Size(sizex, sizey);
+
+        //    // double tangle = ((double)(locationy1 - locationy2) / (double)(locationx1 - locationx2));
+        //    // int angle = (int)((180 / Math.PI)* Math.Atan(tangle));
+        //    // a.RotateAngle = angle;
+        //    // weight = Math.Truncate(weight*1000)/1000;  
+        //    // a.NewText = "dsafdsafdsafdsa" + weight;
+        //    // a.BackColor = Color.Transparent;
+        //    // a.ForeColor = Color.Tomato;
+        //    // //a.AutoSize = true;
+
+        //    // this.Controls.Add(a);
 
             
+           
+        //}
 
-            g = this.CreateGraphics();
+        public void drawline(Graphics g, int x, int y, int x2, int y2,  int width = 2)
+        {
+            
+
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             Pen myPen = new Pen(Color.Red);
             myPen.Width = width;
-            g.DrawLine(myPen, x+869, y+248, x2+869, y2+248);
+            g.DrawLine(myPen, x + 869, y + 248, x2 + 869, y2 + 248);
 
+        }
+        
+        public void drawweightstring(PaintEventArgs e, int x, int y, int x2, int y2, double weight)
+        {
+
+            double tangle = ((double)(y - y2) / (double)(x - x2));
+            int angle = (int)((180 / Math.PI) * Math.Atan(tangle));
+            int RotateAngle = angle;
             
 
+            // Create font and brush.
+            Font drawFont = new Font("Arial", 10);
+            SolidBrush drawBrush = new SolidBrush(Color.Tomato);
+
+            // Create point for upper-left corner of drawing.
+            PointF drawPoint = new Point((2 * x + x2) / 3 + 869 , (2 * y + y2) / 3 + 248 );
+            //PointF drawPoint = new Point(400, 400);
+            e.Graphics.TranslateTransform((2 * x + x2) / 3 + 869, (2 * y + y2) / 3 + 248);
+            e.Graphics.RotateTransform(RotateAngle);
+            weight = Math.Truncate(weight * 1000) / 1000000;
+            e.Graphics.DrawString(""+weight, drawFont, drawBrush, 0,0);
+            
+            e.Graphics.ResetTransform();
         }
 
         public void gui()
         {
+            
             int k = 13;
             int e = 9;
+            lines.Clear();
+            weightstring.Clear();
             foreach (Button b in dynamicbuttons)
                 this.Controls.Remove(b);
-            drawbutton(100, 100,30,30);
+            Invalidate();
+
+            
+            drawbutton(100, 100, 30, 30);
+            dynamicbuttons[0].Text = "X";
             drawbutton(100, 200, 30, 30);
+            dynamicbuttons[1].Text = "Y";
             drawbutton(100, 300, 30, 30);
+            dynamicbuttons[2].Text = "-1";
             int number=weights.Count / 3;
             switch (number)
             {
@@ -866,34 +979,147 @@ You can try again by increasing the maximum number of cycles or by slightly chan
                     {
                         
                         drawbutton(250,200);
-                        drawline(100+k,100 + k, 250+e,200+e);
-                        drawline(100 + k, 200 + k, 250+e, 200+e);
-                        drawline(100 + k, 300 + k, 250+e, 200+e);
+                        addline(100+k,100 + k, 250+e,200+e);
+                        addweightstring(100 + k, 100 + k, 250 + e, 200 + e, weights[0]);
+                        addline(100 + k, 200 + k, 250+e, 200+e);
+                        addweightstring(100 + k, 200 + k, 250 + e, 200 + e, weights[1]);
+                        addline(100 + k, 300 + k, 250+e, 200+e);
+                        addweightstring(100 + k, 300 + k, 250 + e, 200 + e, weights[2]);
+                        addline(250 + e, 200 + e, 350 + e, 200 + e);
                     }
                     break;
                 case 2:
                     {
                         drawbutton(250,150);
-                        drawline(100 + k, 100 + k, 250 + e, 150 + e);
-                        drawline(100 + k, 200 + k, 250 + e, 150 + e);
-                        drawline(100 + k, 300 + k, 250 + e, 150 + e);
+                        addline(100 + k, 100 + k, 250 + e, 150 + e);
+                        addweightstring(100 + k, 100 + k, 250 + e, 150 + e, weights[0]);
+                        addline(100 + k, 200 + k, 250 + e, 150 + e);
+                        addweightstring(100 + k, 200 + k, 250 + e, 150 + e, weights[1]);
+                        addline(100 + k, 300 + k, 250 + e, 150 + e);
+                        addweightstring(100 + k, 300 + k, 250 + e, 150 + e, weights[2]);
+                        addline(250 + e, 150 + e, 350 + e, 150 + e);
+
                         drawbutton(250,250);
-                        drawline(100 + k, 100 + k, 250 + e, 250 + e);
-                        drawline(100 + k, 200 + k, 250 + e, 250 + e);
-                        drawline(100 + k, 300 + k, 250 + e, 250 + e);
+                        addline(100 + k, 100 + k, 250 + e, 250 + e);
+                        addweightstring(100 + k, 100 + k, 250 + e, 250 + e, weights[3]);
+                        addline(100 + k, 200 + k, 250 + e, 250 + e);
+                        addweightstring(100 + k, 200 + k, 250 + e, 250 + e, weights[4]);
+                        addline(100 + k, 300 + k, 250 + e, 250 + e);
+                        addweightstring(100 + k, 300 + k, 250 + e, 250 + e, weights[5]);
+                        addline(250 + e, 250 + e, 350 + e, 250 + e);
                     }
                     break;
                 default:
                     {
                         int length = 440 /( number-1);
                         for (int i = 0; i < number; i++)
-                            drawbutton(250,i*length);
+                        {
+                            drawbutton(250, i * length);
+                            addline(100 + k, 100 + k, 250 + e, i * length + e);
+                            addweightstring(100 + k, 100 + k, 250 + e, i * length + e, weights[i*3]);
+                            addline(100 + k, 200 + k, 250 + e, i * length + e);
+                            addweightstring(100 + k, 200 + k, 250 + e, i * length + e, weights[1+i*3]);
+                            addline(100 + k, 300 + k, 250 + e, i * length + e);
+                            addweightstring(100 + k, 300 + k, 250 + e, i * length + e, weights[2+i*3]);
+                            addline(250+k, i * length+k, 350 + k, i * length + k);
+                        }
+                            
                     }
                     break;
 
             }
 
             
+
+        }
+
+        
+
+        
+
+
+        public void addline(int x1,int y1,int x2,int y2)
+        {
+            lines.Add(x1);
+            lines.Add(y1);
+            lines.Add(x2);
+            lines.Add(y2);
+        }
+        public void addweightstring(int x1, int y1, int x2, int y2, double weight)
+        {
+            weightstring.Add(x1);
+            weightstring.Add(y1);
+            weightstring.Add(x2);
+            weightstring.Add(y2);
+            weightstring.Add((int)(weight*1000));
+        }
+
+        private void Form1_Paint(object sender, PaintEventArgs e)
+        {
+            
+            
+            for (int i = 0; i < lines.Count; i += 4)
+            {
+                try
+                {
+                    drawline(e.Graphics, lines[0 + i ], lines[1 + i ], lines[2 + i ], lines[3 + i ]);
+                }
+                catch (Exception hata)
+                {
+                    MessageBox.Show("hata var form1 paint drawline");
+                }
+            }
+
+            for (int i = 0; i < weightstring.Count; i += 5)
+            {
+                try
+                {
+                    drawweightstring(e, weightstring[0 + i], weightstring[1 + i], weightstring[2 + i], weightstring[3 + i], i);
+                }
+                catch (Exception hata)
+                {
+                    MessageBox.Show("hata var form1 paint drawstring");
+                }
+            }
+            ////////////////////////
+
+            StringFormat format = new StringFormat();
+            //format.Alignment = StringAlignment.Center;
+
+            SizeF txt = e.Graphics.MeasureString(Text, this.Font);
+            SizeF sz = e.Graphics.VisibleClipBounds.Size;
+
+            //////90 degrees
+            //e.Graphics.TranslateTransform(sz.Width, 0);
+            ////e.Graphics.RotateTransform(180);
+            //e.Graphics.RotateTransform(90);
+            //e.Graphics.DrawString(Text, this.Font, Brushes.Black, new RectangleF(0, 0, sz.Height, sz.Width), format);
+            ////e.Graphics.ResetTransform();
+
+            ////180 degrees
+            //e.Graphics.TranslateTransform(sz.Width, sz.Height);
+            //e.Graphics.RotateTransform(180);
+            //e.Graphics.DrawString(Text, this.Font, Brushes.Black, new RectangleF(0, 0, sz.Width, sz.Height), format);
+            //e.Graphics.ResetTransform();
+
+            ////270 degrees
+            //e.Graphics.TranslateTransform(0, sz.Height);
+            //e.Graphics.RotateTransform(270);
+            //e.Graphics.DrawString(Text, this.Font, Brushes.Black, new RectangleF(0, 0, sz.Height, sz.Width), format);
+            //e.Graphics.ResetTransform();
+
+            //0 = 360 degrees
+            e.Graphics.TranslateTransform(100, 0);
+            e.Graphics.RotateTransform(45);
+            e.Graphics.TranslateTransform(0, 0);
+            e.Graphics.DrawString(Text, this.Font, Brushes.Black, new RectangleF(0, 0, sz.Width, sz.Height), format);
+            e.Graphics.ResetTransform();
+
+
+        }
+
+        private void button2_Paint(object sender, PaintEventArgs e)
+        {
 
         }
     }
@@ -973,6 +1199,36 @@ You can try again by increasing the maximum number of cycles or by slightly chan
             // Butonun yeni şekli elips oluyor
 
         }
+
     }
 
+    public class mylabel: Label    
+    {
+        public int RotateAngle { get; set; }  // to rotate your text
+        public string NewText { get; set; }   // to draw text
+        protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
+        {
+            Brush b = new SolidBrush(this.ForeColor);
+            e.Graphics.TranslateTransform(this.Width / 2, this.Height / 2);
+            e.Graphics.RotateTransform(this.RotateAngle);
+            e.Graphics.DrawString(this.NewText, this.Font, b, 0f, 0f);
+
+            // Create string to draw.
+            String drawString = "Sample Text";
+
+            // Create font and brush.
+            Font drawFont = new Font("Arial", 16);
+            SolidBrush drawBrush = new SolidBrush(Color.Black);
+
+            // Create point for upper-left corner of drawing.
+            PointF drawPoint = new PointF(1000.0F, 450.0F);
+
+            // Draw string to screen.
+            e.Graphics.DrawString(drawString, drawFont, drawBrush, drawPoint);
+
+
+        }
+    }
+
+    
 }

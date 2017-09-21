@@ -60,6 +60,7 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -73,6 +74,7 @@
             this.button1.TabIndex = 0;
             this.button1.Text = "Discrete Perceptron learning";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // panel1
@@ -81,6 +83,7 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(600, 600);
             this.panel1.TabIndex = 1;
+            this.panel1.Visible = false;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             this.panel1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseClick);
             this.panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
@@ -91,6 +94,7 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(230, 199);
             this.panel2.TabIndex = 2;
+            this.panel2.Visible = false;
             this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
             // 
             // trackBar1
@@ -100,7 +104,8 @@
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(251, 45);
             this.trackBar1.TabIndex = 3;
-            this.trackBar1.Value = 5;
+            this.trackBar1.Value = 10;
+            this.trackBar1.Visible = false;
             this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // textBox1
@@ -110,6 +115,7 @@
             this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 4;
             this.textBox1.Text = "300";
+            this.textBox1.Visible = false;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // radioButton1
@@ -173,6 +179,7 @@
             this.label3.Size = new System.Drawing.Size(92, 14);
             this.label3.TabIndex = 9;
             this.label3.Text = "Learning factor :";
+            this.label3.Visible = false;
             // 
             // label4
             // 
@@ -180,11 +187,12 @@
             this.label4.BackColor = System.Drawing.Color.Transparent;
             this.label4.Font = new System.Drawing.Font("Corbel", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label4.Location = new System.Drawing.Point(3, 406);
+            this.label4.Location = new System.Drawing.Point(-2, 409);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(134, 14);
             this.label4.TabIndex = 10;
             this.label4.Text = "maximum loop number :";
+            this.label4.Visible = false;
             // 
             // label5
             // 
@@ -204,6 +212,7 @@
             this.button2.Text = " Continuous Perceptron learning";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.Paint += new System.Windows.Forms.PaintEventHandler(this.button2_Paint);
             // 
             // label7
             // 
@@ -214,6 +223,7 @@
             this.label7.Size = new System.Drawing.Size(42, 13);
             this.label7.TabIndex = 15;
             this.label7.Text = "number";
+            this.label7.Visible = false;
             // 
             // button3
             // 
@@ -223,6 +233,7 @@
             this.button3.TabIndex = 16;
             this.button3.Text = "save point locations";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Visible = false;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button4
@@ -293,6 +304,7 @@
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(251, 100);
             this.panel4.TabIndex = 22;
+            this.panel4.Visible = false;
             // 
             // label6
             // 
@@ -305,6 +317,7 @@
             this.label6.Size = new System.Drawing.Size(85, 14);
             this.label6.TabIndex = 14;
             this.label6.Text = "choosen  class :";
+            this.label6.Visible = false;
             // 
             // comboBox1
             // 
@@ -314,6 +327,7 @@
             this.comboBox1.Size = new System.Drawing.Size(121, 21);
             this.comboBox1.TabIndex = 13;
             this.comboBox1.Text = "0";
+            this.comboBox1.Visible = false;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // textBox2
@@ -322,7 +336,7 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(100, 20);
             this.textBox2.TabIndex = 24;
-            this.textBox2.Text = "10";
+            this.textBox2.Text = "5";
             this.textBox2.Visible = false;
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
@@ -350,16 +364,18 @@
             this.label9.Size = new System.Drawing.Size(102, 18);
             this.label9.TabIndex = 25;
             this.label9.Text = "weight table:";
+            this.label9.Visible = false;
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBox1.Location = new System.Drawing.Point(869, 43);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
             this.richTextBox1.Size = new System.Drawing.Size(198, 199);
             this.richTextBox1.TabIndex = 26;
             this.richTextBox1.Text = "";
+            this.richTextBox1.Visible = false;
             // 
             // progressBar1
             // 
@@ -367,6 +383,7 @@
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(141, 23);
             this.progressBar1.TabIndex = 27;
+            this.progressBar1.Visible = false;
             this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
             // 
             // label10
@@ -379,6 +396,7 @@
             this.label10.Size = new System.Drawing.Size(89, 14);
             this.label10.TabIndex = 28;
             this.label10.Text = "learning status:";
+            this.label10.Visible = false;
             // 
             // label11
             // 
@@ -391,6 +409,7 @@
             this.label11.Size = new System.Drawing.Size(97, 16);
             this.label11.TabIndex = 29;
             this.label11.Text = "Dimension 2:";
+            this.label11.Visible = false;
             // 
             // label12
             // 
@@ -402,15 +421,26 @@
             this.label12.Size = new System.Drawing.Size(134, 18);
             this.label12.TabIndex = 30;
             this.label12.Text = "Main Dimension:";
+            this.label12.Visible = false;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(1172, 389);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(0, 13);
+            this.label13.TabIndex = 31;
+            this.label13.Visible = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Window;
+            this.BackColor = System.Drawing.Color.White;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1313, 733);
+            this.Controls.Add(this.label13);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
@@ -436,11 +466,13 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.button1);
+            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Perceptron Simulation";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -484,6 +516,7 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
     }
 }
 
